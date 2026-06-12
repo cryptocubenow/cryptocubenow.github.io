@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Terms of Service, Privacy Policy, Cookie Policy, and Risk Disclosure for CryptoCube.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav (identical to other pages) */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .nav-btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+    .nav-btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .nav-btn-primary:hover { background: #2563eb; box-shadow: 0 4px 20px var(--primary-glow); }
+    
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .mobile-menu a.active { color: var(--primary); }
+
+    /* Page Header */
+    .legal-header {
+      margin-top: 68px;
+      padding: 60px 32px 40px;
+      background: radial-gradient(ellipse at 50% 20%, rgba(59,130,246,0.06) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .legal-header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .legal-header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 32px 0;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 14px 28px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover {
+      color: var(--text-secondary);
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Content Panel */
+    .legal-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px 80px;
+    }
+    .legal-panel {
+      display: none;
+    }
+    .legal-panel.active {
+      display: block;
+    }
+    .legal-panel h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-panel h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--text);
+    }
+    .legal-panel p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .legal-panel ul, .legal-panel ol {
+      margin-left: 24px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+    }
+    .legal-panel li {
+      margin-bottom: 8px;
+    }
+    .legal-panel a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .legal-panel a:hover {
+      text-decoration: underline;
+    }
+    .legal-panel .last-updated {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Footer (same as index) */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 64px 32px 32px;
+      background: var(--bg-elevated);
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .footer-brand .nav-logo { font-size: 1.3rem; }
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 300px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-social a {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .footer-social a:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-col a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 48px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--primary); }
+
+    /* Cookie Banner */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 20px 32px;
+      z-index: 4000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .cookie-btns { display: flex; gap: 12px; }
+    .cookie-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .cookie-accept { background: var(--primary); color: white; }
+    .cookie-manage { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+    /* Chat Widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 24px; left: 24px;
+      z-index: 3000;
+    }
+    .chat-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-btn:hover { transform: scale(1.05); }
+    .chat-modal {
+      position: absolute;
+      bottom: 70px; left: 0;
+      width: 340px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .chat-modal.open { display: block; }
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chat-header h4 { font-size: 1rem; }
+    .chat-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .chat-body {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .chat-input {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      margin-top: 12px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    .chat-send {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      margin-top: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1024px) {
+      .footer-inner { grid-template-columns: repeat(3, 1fr); }
+      .tabs { justify-content: center; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .legal-header h1 { font-size: 2rem; }
+      .tabs { gap: 4px; }
+      .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
+      .legal-content { padding: 32px 20px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .toast-container { right: 12px; bottom: 12px; }
+      .chat-widget { left: 12px; bottom: 80px; }
+      .cookie-banner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    <i class="fas fa-cookie-bite"></i> We use cookies to secure your account, analyze traffic, and personalize your experience.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-manage" onclick="acceptCookies()">Manage</button>
+    <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept all</button>
+  </div>
+</div>
+
+<div class="chat-widget">
+  <div class="chat-modal" id="chatModal">
+    <div class="chat-header">
+      <h4><i class="fas fa-headset"></i> Support</h4>
+      <button class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-body">
+      <p>Hi! 👋 Our team is currently assisting other users. Leave your email and message — we'll reply within 2 hours.</p>
+      <input type="text" class="chat-input" placeholder="Your email" id="chatEmail">
+      <input type="text" class="chat-input" placeholder="How can we help?" id="chatMsg">
+      <button class="chat-send" onclick="sendChat()">Send message</button>
+    </div>
+  </div>
+  <button class="chat-btn" onclick="toggleChat()" id="chatBtn"><i class="fas fa-comment-dots"></i></button>
+</div>
+
+<!-- Navigation -->
+<<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html" style="color: var(--primary);">Get started</a>
+</div>
+
+<!-- Legal Header -->
+<div class="legal-header">
+  <h1>Legal</h1>
+  <p>Our policies, terms, and disclosures — designed for transparency and your protection.</p>
+</div>
+
+<!-- Tabs -->
+<div class="tabs-container">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="terms">Terms of Service</button>
+    <button class="tab-btn" data-tab="privacy">Privacy Policy</button>
+    <button class="tab-btn" data-tab="cookies">Cookie Policy</button>
+    <button class="tab-btn" data-tab="risk">Risk Disclosure</button>
+  </div>
+</div>
+
+<!-- Content Panels -->
+<div class="legal-content">
+  <!-- Terms of Service -->
+  <div id="terms" class="legal-panel active">
+    <h2>Terms of Service</h2>
+    <div class="last-updated">Last updated: June 8, 2026</div>
+    
+    <h3>1. Acceptance of Terms</h3>
+    <p>By accessing or using CryptoCube (the "Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Platform. CryptoCube is operated by CryptoCube Technologies Ltd., a company registered in the British Virgin Islands.</p>
+    
+    <h3>2. Eligibility</h3>
+    <p>You must be at least 18 years old and have the legal capacity to enter into binding contracts. You may not use the Platform if you are located in a restricted jurisdiction (including but not limited to the United States, Cuba, Iran, North Korea, Syria, Crimea region). It is your responsibility to ensure compliance with local laws.</p>
+    
+    <h3>3. Account Registration</h3>
+    <p>You must provide accurate, current, and complete information during registration. You are solely responsible for maintaining the confidentiality of your password and for all activities under your account. Notify us immediately of any unauthorized use.</p>
+    
+    <h3>4. Trading Services</h3>
+    <p>CryptoCube facilitates the buying and selling of supported cryptocurrencies ("Digital Assets"). All trades are executed at the displayed price plus applicable fees. Once an order is placed, it cannot be cancelled. Settlement times vary by network. We do not act as your broker, advisor, or custodian.</p>
+    
+    <h3>5. Fees</h3>
+    <p>Buy trades incur a 0.1% fee. Sell trades incur a 0.5% fee. Network (miner) fees for withdrawals are passed through at cost. We do not charge deposit fees. Fee changes will be announced 14 days in advance.</p>
+    
+    <h3>6. Prohibited Activities</h3>
+    <p>You may not use the Platform for any illegal activity, including but not limited to: money laundering, terrorist financing, fraud, hacking, market manipulation, or unlicensed money transmission. Violation may result in account termination and reporting to authorities.</p>
+    
+    <h3>7. Risk Acknowledgement</h3>
+    <p>Digital assets are highly volatile and may become illiquid at any time. You assume full responsibility for any financial losses. Past performance does not guarantee future results. CryptoCube is not responsible for losses due to network congestion, smart contract bugs, or exchange hacks.</p>
+    
+    <h3>8. Intellectual Property</h3>
+    <p>All content, logos, and software are owned by CryptoCube. You may not copy, modify, or reverse engineer any part of the Platform without written consent.</p>
+    
+    <h3>9. Limitation of Liability</h3>
+    <p>To the maximum extent permitted by law, CryptoCube and its affiliates shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Platform. Our total liability shall not exceed the amount of fees you paid in the prior 6 months.</p>
+    
+    <h3>10. Termination</h3>
+    <p>We may suspend or terminate your account at any time for violation of these Terms, without prior notice. You may close your account at any time after withdrawing all funds.</p>
+    
+    <h3>11. Governing Law</h3>
+    <p>These Terms are governed by the laws of the British Virgin Islands, without regard to conflict of laws principles. Any dispute shall be resolved through binding arbitration in Tortola, BVI.</p>
+    
+    <h3>12. Changes to Terms</h3>
+    <p>We may update these Terms from time to time. Continued use after changes constitutes acceptance. Material changes will be notified via email or platform announcement.</p>
+    
+    <p><strong>Contact:</strong> legal@cryptocube.io</p>
+  </div>
+
+  <!-- Privacy Policy -->
+  <div id="privacy" class="legal-panel">
+    <h2>Privacy Policy</h2>
+    <div class="last-updated">Last updated: June 8, 2026</div>
+    
+    <h3>1. Information We Collect</h3>
+    <p>We collect information you provide directly, such as name, email address, phone number, government ID (for KYC), wallet addresses, transaction history, and payment method details. Automatically, we collect IP address, device fingerprints, browser type, and usage analytics via cookies.</p>
+    
+    <h3>2. How We Use Your Information</h3>
+    <p>We use your information to: provide trading services, verify your identity (KYC/AML), process transactions, prevent fraud, comply with legal obligations, improve our platform, and communicate with you about updates or security alerts.</p>
+    
+    <h3>3. Data Sharing</h3>
+    <p>We do not sell your personal data. We may share data with: service providers (payment processors, identity verification vendors), law enforcement when required by subpoena or court order, and blockchain analytics firms to detect illicit activity. We may share aggregated, anonymized data for research.</p>
+    
+    <h3>4. Data Retention</h3>
+    <p>We retain your personal data for as long as your account is active, plus 7 years after account closure to comply with anti‑money laundering regulations. Transaction records are kept indefinitely for audit purposes.</p>
+    
+    <h3>5. Security</h3>
+    <p>We use industry‑standard encryption (TLS 1.3), cold storage for 98% of assets, and regular security audits. However, no system is 100% secure. You are responsible for protecting your own passwords and 2FA keys.</p>
+    
+    <h3>6. Your Rights (GDPR/CCPA)</h3>
+    <p>Depending on your location, you may have the right to access, correct, delete, or export your personal data, as well as object to certain processing. To exercise these rights, contact privacy@cryptocube.io. We will respond within 30 days.</p>
+    
+    <h3>7. International Transfers</h3>
+    <p>Your data may be transferred to and processed in countries outside your residence, including the BVI, EU, and Singapore. We rely on Standard Contractual Clauses or equivalent safeguards for such transfers.</p>
+    
+    <h3>8. Children's Privacy</h3>
+    <p>The Platform is not intended for anyone under 18. We do not knowingly collect data from minors. If we become aware, we will delete such information.</p>
+    
+    <h3>9. Contact Us</h3>
+    <p>For privacy questions, email privacy@cryptocube.io or write to: Data Protection Officer, CryptoCube Technologies Ltd., P.O. Box 346, Road Town, Tortola, BVI.</p>
+  </div>
+
+  <!-- Cookie Policy -->
+  <div id="cookies" class="legal-panel">
+    <h2>Cookie Policy</h2>
+    <div class="last-updated">Last updated: June 8, 2026</div>
+    
+    <h3>What Are Cookies?</h3>
+    <p>Cookies are small text files stored on your device when you visit our website. They help us remember your preferences, analyze site traffic, and enhance security.</p>
+    
+    <h3>Types of Cookies We Use</h3>
+    <ul>
+      <li><strong>Essential Cookies:</strong> Required for login, session management, and fraud prevention. Cannot be disabled.</li>
+      <li><strong>Preference Cookies:</strong> Store your language and region settings.</li>
+      <li><strong>Analytics Cookies:</strong> Help us understand how users interact with the platform (e.g., Google Analytics, Mixpanel).</li>
+      <li><strong>Security Cookies:</strong> Detect bot activity and brute‑force attacks.</li>
+    </ul>
+    
+    <h3>Third‑Party Cookies</h3>
+    <p>We use limited third‑party services that may set their own cookies, including Cloudflare (security), Stripe (payment processing), and Sentry (error tracking). These parties have their own privacy policies.</p>
+    
+    <h3>Your Choices</h3>
+    <p>You can manage cookies through your browser settings. Disabling essential cookies will prevent you from using the Platform. For analytics cookies, you can opt out using the "Manage" button in our cookie banner.</p>
+    
+    <h3>Changes to This Policy</h3>
+    <p>We may update this Cookie Policy as our practices evolve. The "Last updated" date will reflect changes.</p>
+  </div>
+
+  <!-- Risk Disclosure -->
+  <div id="risk" class="legal-panel">
+    <h2>Risk Disclosure Statement</h2>
+    <div class="last-updated">Last updated: June 8, 2026</div>
+    
+    <p><strong>Trading digital assets involves significant risk. You should carefully consider whether such trading is suitable for you in light of your financial condition and risk tolerance.</strong></p>
+    
+    <h3>Market Volatility</h3>
+    <p>Cryptocurrency prices can fluctuate dramatically in a short period. You may lose your entire investment. Past performance is not indicative of future results.</p>
+    
+    <h3>Liquidity Risk</h3>
+    <p>Some digital assets may have low trading volume, making it difficult to sell at desired prices. In extreme conditions, trading may be halted.</p>
+    
+    <h3>Cybersecurity Risk</h3>
+    <p>While we employ best‑in‑class security measures, no system is immune to hacking, phishing, or technical failure. You are responsible for securing your own devices and accounts.</p>
+    
+    <h3>Regulatory Risk</h3>
+    <p>The legal status of cryptocurrencies varies by jurisdiction and may change suddenly. New regulations could impact your ability to trade or withdraw funds.</p>
+    
+    <h3>Network Risk</h3>
+    <p>Transactions rely on underlying blockchain networks (Bitcoin, Ethereum, etc.). Network congestion, forks, or 51% attacks could delay or reverse transactions.</p>
+    
+    <h3>No Advice</h3>
+    <p>CryptoCube does not provide investment, tax, or legal advice. You should consult with qualified professionals before making trading decisions.</p>
+    
+    <h3>Non‑Custodial Warnings</h3>
+    <p>When you withdraw funds to an external wallet, you assume full responsibility for that wallet's security. We cannot recover assets sent to incorrect addresses or unsupported networks.</p>
+    
+    <p><strong>By using CryptoCube, you acknowledge that you have read, understood, and accepted these risks. You agree that CryptoCube is not liable for any financial losses you incur.</strong></p>
+  </div>
+</div>
+
+<!-- Footer (same as index) -->
+<<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">CryptoCube</div>
+      <p>The most transparent way to buy, sell, and trade cryptocurrency. Built for traders who demand speed and security.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+        <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        <a href="#" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="buy.html">Buy crypto</a></li>
+        <li><a href="sell.html">Sell crypto</a></li>
+        <li><a href="market.html">Markets</a></li>
+        <li><a href="wallet.html">Wallet</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="legal.html">Legal</a></li>
+        <li><a href="status.html">Status</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="support.html">Help center</a></li>
+        <li><a href="support.html">Contact us</a></li>
+        <li><a href="#">API docs</a></li>
+        <li><a href="#">Community</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="legal.html">Terms of service</a></li>
+        <li><a href="legal.html">Privacy policy</a></li>
+        <li><a href="legal.html">Cookie policy</a></li>
+        <li><a href="legal.html">Risk disclosure</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 CryptoCube. All rights reserved.</span>
+    <span>CryptoCube is not a bank. Digital assets are volatile. Trade responsibly.</span>
+  </div>
+</footer>
+
+<script>
+  // Page transitions
+  const transition = document.getElementById('pageTransition');
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn, .footer-col a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !href.startsWith('javascript')) {
+        e.preventDefault();
+        transition.classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // Mobile menu
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Toast system
+  function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+    const colors = { success: '#22c55e', error: '#ef4444', info: '#3b82f6' };
+    toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  // Cookie consent
+  function acceptCookies() {
+    localStorage.setItem('cc_cookies', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+    showToast('Preferences saved', 'success', 2000);
+  }
+  if (!localStorage.getItem('cc_cookies')) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('show'), 2000);
+  }
+
+  // Chat
+  function toggleChat() {
+    document.getElementById('chatModal').classList.toggle('open');
+  }
+  function sendChat() {
+    const email = document.getElementById('chatEmail').value.trim();
+    const msg = document.getElementById('chatMsg').value.trim();
+    if (!email || !msg) {
+      showToast('Please fill in all fields', 'error');
+      return;
+    }
+    showToast('Message sent! We\'ll reply within 2 hours.', 'success');
+    document.getElementById('chatEmail').value = '';
+    document.getElementById('chatMsg').value = '';
+    toggleChat();
+  }
+
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.legal-panel');
+  
+  function switchTab(tabId) {
+    panels.forEach(panel => panel.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    tabs.forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+    
+    // Update URL hash without scrolling
+    history.pushState(null, '', `#${tabId}`);
+  }
+  
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+      switchTab(tabId);
+    });
+  });
+  
+  // Handle initial hash
+  const hash = window.location.hash.substring(1);
+  if (hash && ['terms', 'privacy', 'cookies', 'risk'].includes(hash)) {
+    switchTab(hash);
+  } else {
+    switchTab('terms');
+  }
+</script>
+</body>
+</html>

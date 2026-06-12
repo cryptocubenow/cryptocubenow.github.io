@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Manage your crypto portfolio. Track balances, transactions, and more.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --primary-dark: #1d4ed8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .nav-btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+    .nav-btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .nav-btn-primary:hover { background: #2563eb; box-shadow: 0 4px 20px var(--primary-glow); }
+    
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .mobile-menu a.active { color: var(--primary); }
+
+    /* Page Layout */
+    .page-content {
+      margin-top: 68px;
+      padding: 48px 32px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Balance Cards */
+    .balance-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .balance-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .balance-card.primary {
+      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(168,85,247,0.05));
+      border-color: rgba(59,130,246,0.3);
+    }
+    .balance-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .balance-value {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .balance-change {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .balance-change.up { color: var(--success); }
+    .balance-change.down { color: var(--danger); }
+    .balance-change.neutral { color: var(--text-muted); }
+    
+    .balance-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .balance-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .balance-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .balance-btn.deposit {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .balance-btn.deposit:hover {
+      background: #2563eb;
+    }
+
+    /* Chart Area */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .chart-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .chart-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .chart-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chart-tab:hover { color: var(--text-secondary); }
+    .chart-tab.active {
+      background: var(--bg-input);
+      color: var(--text);
+    }
+    .chart-area {
+      height: 280px;
+      position: relative;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .chart-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      gap: 12px;
+    }
+    .chart-empty i {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    /* Assets Table */
+    .assets-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .assets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .assets-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .assets-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .assets-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+    }
+    .assets-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .assets-table tr:last-child td {
+      border-bottom: none;
+    }
+    .asset-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .asset-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .asset-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .asset-symbol {
+      font-weight: 600;
+    }
+    .asset-name {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .asset-price {
+      color: var(--text-secondary);
+    }
+    .asset-balance {
+      font-weight: 600;
+    }
+    .asset-value {
+      font-weight: 600;
+    }
+    .asset-change {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .asset-change.up { color: var(--success); }
+    .asset-change.down { color: var(--danger); }
+
+    .empty-assets {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-assets i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+    .empty-assets h3 {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .empty-assets p {
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    /* Transactions */
+    .tx-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .tx-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .tx-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .tx-filter {
+      display: flex;
+      gap: 8px;
+    }
+    .tx-filter-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tx-filter-btn:hover { color: var(--text-secondary); }
+    .tx-filter-btn.active {
+      background: var(--bg-input);
+      color: var(--text);
+    }
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tx-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-input);
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+    .tx-item:hover {
+      background: rgba(255,255,255,0.03);
+    }
+    .tx-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .tx-icon.buy {
+      background: rgba(34,197,94,0.1);
+      color: var(--success);
+    }
+    .tx-icon.sell {
+      background: rgba(239,68,68,0.1);
+      color: var(--danger);
+    }
+    .tx-icon.pending {
+      background: rgba(245,158,11,0.1);
+      color: var(--warning);
+    }
+    .tx-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .tx-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .tx-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .tx-amount {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .tx-amount-value {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .tx-amount-value.buy { color: var(--success); }
+    .tx-amount-value.sell { color: var(--danger); }
+    .tx-status {
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+    .tx-status.completed { color: var(--success); }
+    .tx-status.pending { color: var(--warning); }
+    .tx-status.failed { color: var(--danger); }
+
+    .empty-tx {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-tx i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--primary); }
+
+    /* Cookie */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 20px 32px;
+      z-index: 4000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .cookie-btns { display: flex; gap: 12px; }
+    .cookie-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .cookie-accept { background: var(--primary); color: white; }
+    .cookie-manage { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+    /* Chat */
+    .chat-widget {
+      position: fixed;
+      bottom: 24px; left: 24px;
+      z-index: 3000;
+    }
+    .chat-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-btn:hover { transform: scale(1.05); }
+    .chat-modal {
+      position: absolute;
+      bottom: 70px; left: 0;
+      width: 340px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .chat-modal.open { display: block; }
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chat-header h4 { font-size: 1rem; }
+    .chat-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .chat-body {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .chat-input {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      margin-top: 12px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    .chat-send {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      margin-top: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1024px) {
+      .balance-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .page-content { padding: 24px 16px; }
+      .assets-table { display: block; overflow-x: auto; }
+      .tx-item { flex-wrap: wrap; }
+      .tx-amount { width: 100%; text-align: left; margin-top: 8px; padding-left: 60px; }
+      .toast-container { right: 12px; bottom: 12px; }
+      .chat-widget { left: 12px; bottom: 80px; }
+      .cookie-banner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    <i class="fas fa-cookie-bite"></i> We use cookies to secure your account, analyze traffic, and personalize your experience.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-manage" onclick="acceptCookies()">Manage</button>
+    <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept all</button>
+  </div>
+</div>
+
+<div class="chat-widget">
+  <div class="chat-modal" id="chatModal">
+    <div class="chat-header">
+      <h4><i class="fas fa-headset"></i> Support</h4>
+      <button class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-body">
+      <p>Hi! 👋 Our team is currently assisting other users. Leave your email and message — we'll reply within 2 hours.</p>
+      <input type="text" class="chat-input" placeholder="Your email" id="chatEmail">
+      <input type="text" class="chat-input" placeholder="How can we help?" id="chatMsg">
+      <button class="chat-send" onclick="sendChat()">Send message</button>
+    </div>
+  </div>
+  <button class="chat-btn" onclick="toggleChat()" id="chatBtn"><i class="fas fa-comment-dots"></i></button>
+</div>
+
+<!-- Nav -->
+<<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html" class="active">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html" class="active">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html" style="color: var(--primary);">Get started</a>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+  
+  <!-- Balance Grid -->
+  <div class="balance-grid">
+    <div class="balance-card primary">
+      <div class="balance-label"><i class="fas fa-wallet"></i> Total Balance</div>
+      <div class="balance-value" id="totalBalance">$0.00</div>
+      <div class="balance-change neutral" id="balanceChange">
+        <i class="fas fa-minus"></i> No activity yet
+      </div>
+      <div class="balance-actions">
+        <a href="buy.html" class="balance-btn deposit">
+          <i class="fas fa-arrow-down"></i> Deposit
+        </a>
+        <a href="sell.html" class="balance-btn">
+          <i class="fas fa-arrow-up"></i> Withdraw
+        </a>
+      </div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-label"><i class="fas fa-coins"></i> Crypto Value</div>
+      <div class="balance-value" id="cryptoValue" style="font-size: 1.6rem;">$0.00</div>
+      <div class="balance-change neutral" style="font-size: 0.85rem;">
+        Across <span id="assetCount">0</span> assets
+      </div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-label"><i class="fas fa-clock"></i> Pending</div>
+      <div class="balance-value" id="pendingValue" style="font-size: 1.6rem;">$0.00</div>
+      <div class="balance-change neutral" style="font-size: 0.85rem;">
+        <span id="pendingCount">0</span> transactions
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h2>Portfolio Performance</h2>
+      <div class="chart-tabs">
+        <button class="chart-tab active" onclick="setChartPeriod('1D')">1D</button>
+        <button class="chart-tab" onclick="setChartPeriod('1W')">1W</button>
+        <button class="chart-tab" onclick="setChartPeriod('1M')">1M</button>
+        <button class="chart-tab" onclick="setChartPeriod('1Y')">1Y</button>
+        <button class="chart-tab" onclick="setChartPeriod('ALL')">ALL</button>
+      </div>
+    </div>
+    <div class="chart-area" id="chartArea">
+      <div class="chart-empty">
+        <i class="fas fa-chart-area"></i>
+        <span>Your portfolio chart will appear after your first transaction</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assets -->
+  <div class="assets-card">
+    <div class="assets-header">
+      <h2>Your Assets</h2>
+    </div>
+    <div id="assetsContainer">
+      <div class="empty-assets">
+        <i class="fas fa-coins"></i>
+        <h3>No assets yet</h3>
+        <p>Buy your first cryptocurrency to see it here</p>
+        <a href="buy.html" class="balance-btn deposit" style="display: inline-flex; padding: 12px 24px;">
+          <i class="fas fa-plus"></i> Buy crypto
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions -->
+  <div class="tx-card">
+    <div class="tx-header">
+      <h2>Transaction History</h2>
+      <div class="tx-filter">
+        <button class="tx-filter-btn active" onclick="filterTx('all')">All</button>
+        <button class="tx-filter-btn" onclick="filterTx('buy')">Buy</button>
+        <button class="tx-filter-btn" onclick="filterTx('sell')">Sell</button>
+      </div>
+    </div>
+    <div id="txContainer">
+      <div class="empty-tx">
+        <i class="fas fa-receipt"></i>
+        <h3>No transactions yet</h3>
+        <p>Your transaction history will appear here</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========== UTILITIES ==========
+  function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+    const colors = { success: '#22c55e', error: '#ef4444', info: '#3b82f6' };
+    toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function acceptCookies() {
+    localStorage.setItem('cc_cookies', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+  }
+  if (!localStorage.getItem('cc_cookies')) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('show'), 2000);
+  }
+
+  function toggleChat() {
+    document.getElementById('chatModal').classList.toggle('open');
+  }
+  function sendChat() {
+    const email = document.getElementById('chatEmail').value.trim();
+    const msg = document.getElementById('chatMsg').value.trim();
+    if (!email || !msg) {
+      showToast('Please fill in all fields', 'error');
+      return;
+    }
+    showToast('Message sent! We\'ll reply within 2 hours.', 'success');
+    document.getElementById('chatEmail').value = '';
+    document.getElementById('chatMsg').value = '';
+    toggleChat();
+  }
+
+  // Page transitions
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#')) {
+        e.preventDefault();
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // ========== PORTFOLIO DATA ==========
+  // Load from localStorage or initialize empty
+  function loadPortfolio() {
+    const saved = localStorage.getItem('cc_portfolio');
+    return saved ? JSON.parse(saved) : { assets: {}, transactions: [], totalDeposited: 0 };
+  }
+
+  function savePortfolio(portfolio) {
+    localStorage.setItem('cc_portfolio', JSON.stringify(portfolio));
+  }
+
+  // Check for completed purchases from buy flow
+  function checkNewPurchases() {
+    const purchase = localStorage.getItem('cc_purchase');
+    if (purchase) {
+      const data = JSON.parse(purchase);
+      // Only add if not already processed (check timestamp)
+      const portfolio = loadPortfolio();
+      const alreadyProcessed = portfolio.transactions.some(t => 
+        t.timestamp === data.timestamp && t.type === 'buy'
+      );
+      if (!alreadyProcessed) {
+        // Add asset
+        if (!portfolio.assets[data.coin]) {
+          portfolio.assets[data.coin] = { amount: 0, totalSpent: 0, name: data.coinName };
+        }
+        const cryptoAmount = data.total / data.price;
+        portfolio.assets[data.coin].amount += cryptoAmount;
+        portfolio.assets[data.coin].totalSpent += data.total;
+        portfolio.totalDeposited += data.amount;
+        
+        // Add transaction
+        portfolio.transactions.unshift({
+          type: 'buy',
+          coin: data.coin,
+          name: data.coinName,
+          amount: cryptoAmount,
+          usdValue: data.total,
+          price: data.price,
+          timestamp: data.timestamp,
+          status: 'completed',
+          txid: generateTxid()
+        });
+        
+        savePortfolio(portfolio);
+        localStorage.removeItem('cc_purchase'); // Clear so we don't re-add
+        showToast(`Added ${cryptoAmount.toFixed(6)} ${data.coin} to your wallet!`, 'success', 5000);
+      }
+    }
+  }
+
+  // Check for completed sells
+  function checkNewSells() {
+    const sell = localStorage.getItem('cc_sell');
+    if (sell) {
+      const data = JSON.parse(sell);
+      const portfolio = loadPortfolio();
+      const alreadyProcessed = portfolio.transactions.some(t => 
+        t.timestamp === data.timestamp && t.type === 'sell'
+      );
+      if (!alreadyProcessed) {
+        // Deduct asset
+        if (portfolio.assets[data.coin]) {
+          portfolio.assets[data.coin].amount -= data.amount;
+          if (portfolio.assets[data.coin].amount <= 0) {
+            delete portfolio.assets[data.coin];
+          }
+        }
+        
+        // Add transaction
+        portfolio.transactions.unshift({
+          type: 'sell',
+          coin: data.coin,
+          name: data.coin,
+          amount: data.amount,
+          usdValue: data.usdValue,
+          price: data.usdValue / data.amount,
+          timestamp: data.timestamp,
+          status: 'pending',
+          txid: generateTxid()
+        });
+        
+        savePortfolio(portfolio);
+        localStorage.removeItem('cc_sell');
+        showToast(`Sell order submitted. Payout processing.`, 'info', 5000);
+      }
+    }
+  }
+
+  function generateTxid() {
+    const hex = 'abcdef0123456789';
+    let txid = '0x';
+    for (let i = 0; i < 16; i++) txid += hex[Math.floor(Math.random() * 16)];
+    return txid + '...';
+  }
+
+  // ========== RENDER ==========
+  function renderPortfolio() {
+    const portfolio = loadPortfolio();
+    const assets = Object.entries(portfolio.assets);
+    
+    // Calculate totals
+    let totalValue = 0;
+    let cryptoValue = 0;
+    let pendingValue = 0;
+    
+    assets.forEach(([symbol, data]) => {
+      // Use current price from coin data (would need price lookup in real app)
+      const currentPrice = getCoinPrice(symbol);
+      const value = data.amount * currentPrice;
+      totalValue += value;
+      cryptoValue += value;
+    });
+    
+    // Count pending sells
+    const pendingTx = portfolio.transactions.filter(t => t.status === 'pending');
+    pendingTx.forEach(t => {
+      pendingValue += t.usdValue;
+    });
+    
+    // Update balance cards
+    document.getElementById('totalBalance').textContent = '$' + totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('cryptoValue').textContent = '$' + cryptoValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('assetCount').textContent = assets.length;
+    document.getElementById('pendingValue').textContent = '$' + pendingValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('pendingCount').textContent = pendingTx.length;
+    
+    // Update balance change
+    const changeEl = document.getElementById('balanceChange');
+    if (portfolio.totalDeposited > 0) {
+      const pnl = totalValue - portfolio.totalDeposited;
+      const pnlPct = (pnl / portfolio.totalDeposited) * 100;
+      if (pnl >= 0) {
+        changeEl.className = 'balance-change up';
+        changeEl.innerHTML = `<i class="fas fa-arrow-up"></i> +$${pnl.toFixed(2)} (+${pnlPct.toFixed(2)}%) all time`;
+      } else {
+        changeEl.className = 'balance-change down';
+        changeEl.innerHTML = `<i class="fas fa-arrow-down"></i> $${pnl.toFixed(2)} (${pnlPct.toFixed(2)}%) all time`;
+      }
+    }
+    
+    // Render assets
+    if (assets.length === 0) {
+      document.getElementById('assetsContainer').innerHTML = `
+        <div class="empty-assets">
+          <i class="fas fa-coins"></i>
+          <h3>No assets yet</h3>
+          <p>Buy your first cryptocurrency to see it here</p>
+          <a href="buy.html" class="balance-btn deposit" style="display: inline-flex; padding: 12px 24px;">
+            <i class="fas fa-plus"></i> Buy crypto
+          </a>
+        </div>
+      `;
+    } else {
+      let html = `
+        <table class="assets-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Price</th>
+              <th>Balance</th>
+              <th>Value</th>
+              <th>Allocation</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      assets.forEach(([symbol, data]) => {
+        const price = getCoinPrice(symbol);
+        const value = data.amount * price;
+        const allocation = totalValue > 0 ? (value / totalValue * 100).toFixed(1) : 0;
+        const coinColors = {
+          BTC: '#f7931a', ETH: '#627eea', SOL: '#9945ff', BNB: '#f3ba2f',
+          XRP: '#fff', ADA: '#3468d7', DOGE: '#c2a633', TRX: '#ff060a',
+          AVAX: '#e84142', DOT: '#e6007a', LINK: '#375bd2', MATIC: '#8247e5',
+          LTC: '#345d9d', UNI: '#ff007a', USDT: '#26a17b', USDC: '#2775ca'
+        };
+        const color = coinColors[symbol] || '#3b82f6';
+        
+        html += `
+          <tr>
+            <td>
+              <div class="asset-cell">
+                <div class="asset-icon" style="background: ${color}20; color: ${color};">${symbol[0]}</div>
+                <div class="asset-info">
+                  <span class="asset-symbol">${symbol}</span>
+                  <span class="asset-name">${data.name}</span>
+                </div>
+              </div>
+            </td>
+            <td class="asset-price">$${price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td class="asset-balance">${data.amount < 0.01 ? data.amount.toFixed(8) : data.amount.toFixed(6)} ${symbol}</td>
+            <td class="asset-value">$${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;">
+                  <div style="width: ${allocation}%; height: 100%; background: ${color}; border-radius: 3px;"></div>
+                </div>
+                <span style="font-size: 0.85rem; color: var(--text-muted); min-width: 40px;">${allocation}%</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      document.getElementById('assetsContainer').innerHTML = html;
+    }
+    
+    // Render transactions
+    renderTransactions(portfolio.transactions, 'all');
+    
+    // Render chart if we have data
+    if (portfolio.transactions.length > 0) {
+      renderChart(portfolio);
+    }
+  }
+
+  function getCoinPrice(symbol) {
+    const prices = {
+      BTC: 67245, ETH: 3520, SOL: 172.5, BNB: 602, XRP: 0.61,
+      ADA: 0.48, DOGE: 0.134, TRX: 0.12, AVAX: 37.5, DOT: 7.32,
+      LINK: 15.8, MATIC: 0.79, LTC: 76.4, UNI: 9.82, USDT: 1.00, USDC: 1.00
+    };
+    return prices[symbol] || 1;
+  }
+
+  function renderTransactions(transactions, filter) {
+    const container = document.getElementById('txContainer');
+    
+    let filtered = transactions;
+    if (filter !== 'all') {
+      filtered = transactions.filter(t => t.type === filter);
+    }
+    
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="empty-tx">
+          <i class="fas fa-receipt"></i>
+          <h3>No ${filter !== 'all' ? filter : ''} transactions yet</h3>
+          <p>Your transaction history will appear here</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '<div class="tx-list">';
+    filtered.forEach(tx => {
+      const date = new Date(tx.timestamp);
+      const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const iconClass = tx.type === 'buy' ? 'buy' : tx.status === 'pending' ? 'pending' : 'sell';
+      const icon = tx.type === 'buy' ? 'fa-arrow-down' : 'fa-arrow-up';
+      const amountClass = tx.type === 'buy' ? 'buy' : 'sell';
+      const sign = tx.type === 'buy' ? '+' : '-';
+      
+      html += `
+        <div class="tx-item">
+          <div class="tx-icon ${iconClass}">
+            <i class="fas ${icon}"></i>
+          </div>
+          <div class="tx-details">
+            <div class="tx-title">${tx.type === 'buy' ? 'Bought' : 'Sold'} ${tx.coin}</div>
+            <div class="tx-meta">
+              <span><i class="far fa-calendar"></i> ${dateStr}</span>
+              <span><i class="far fa-clock"></i> ${timeStr}</span>
+              <span><i class="fas fa-hashtag"></i> ${tx.txid}</span>
+            </div>
+          </div>
+          <div class="tx-amount">
+            <div class="tx-amount-value ${amountClass}">${sign}${tx.amount < 0.01 ? tx.amount.toFixed(8) : tx.amount.toFixed(6)} ${tx.coin}</div>
+            <div class="tx-status ${tx.status}">${tx.status === 'completed' ? 'Completed' : 'Processing...'}</div>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function filterTx(type) {
+    document.querySelectorAll('.tx-filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    const portfolio = loadPortfolio();
+    renderTransactions(portfolio.transactions, type);
+  }
+
+  // ========== CHART ==========
+  function renderChart(portfolio) {
+    // Simple sparkline of cumulative value over time
+    const txs = [...portfolio.transactions].reverse();
+    let cumulative = 0;
+    const points = [];
+    
+    txs.forEach((tx, i) => {
+      if (tx.type === 'buy') cumulative += tx.usdValue;
+      else cumulative -= tx.usdValue;
+      points.push({ x: i, y: Math.max(0, cumulative) });
+    });
+    
+    if (points.length < 2) return;
+    
+    const maxVal = Math.max(...points.map(p => p.y));
+    const width = 1000;
+    const height = 280;
+    const padding = 40;
+    
+    const svgPoints = points.map((p, i) => {
+      const x = padding + (i / (points.length - 1)) * (width - padding * 2);
+      const y = height - padding - (p.y / maxVal) * (height - padding * 2);
+      return `${x},${y}`;
+    }).join(' ');
+    
+    const areaPoints = `${padding},${height - padding} ${svgPoints} ${width - padding},${height - padding}`;
+    
+    document.getElementById('chartArea').innerHTML = `
+      <svg class="chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon fill="url(#chartGrad)" points="${areaPoints}"/>
+        <polyline fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${svgPoints}"/>
+        ${points.map((p, i) => {
+          const x = padding + (i / (points.length - 1)) * (width - padding * 2);
+          const y = height - padding - (p.y / maxVal) * (height - padding * 2);
+          return `<circle cx="${x}" cy="${y}" r="5" fill="#3b82f6" stroke="#080a12" stroke-width="2"/>`;
+        }).join('')}
+      </svg>
+    `;
+  }
+
+  function setChartPeriod(period) {
+    document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    // In a real app, this would fetch different time ranges
+    showToast(`Showing ${period} data`, 'info', 2000);
+  }
+
+  // ========== INIT ==========
+  checkNewPurchases();
+  checkNewSells();
+  renderPortfolio();
+</script>
+</body>
+</html>

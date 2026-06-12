@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Crypto — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Buy Bitcoin, Ethereum and 200+ cryptocurrencies instantly with your card.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --primary-dark: #1d4ed8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bonus: #a855f7;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .nav-btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+    .nav-btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .nav-btn-primary:hover { background: #2563eb; box-shadow: 0 4px 20px var(--primary-glow); }
+    
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .mobile-menu a.active { color: var(--primary); }
+
+    /* Page Layout */
+    .page-content {
+      margin-top: 68px;
+      padding: 48px 32px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      display: grid;
+      grid-template-columns: 260px 1fr 340px;
+      gap: 32px;
+      align-items: start;
+    }
+    
+    /* Steps Panel */
+    .steps-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: sticky;
+      top: 84px;
+    }
+    .steps-panel h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+    .step-item:last-child { border-bottom: none; }
+    .step-item.active { opacity: 1; }
+    .step-item.completed { opacity: 1; }
+    .step-item.completed .step-number {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .step-item.active .step-number {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    .step-content h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step-content p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Main Form */
+    .form-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .form-panel h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .form-panel .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+    
+    .form-group {
+      margin-bottom: 28px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-input.valid {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.1);
+    }
+    .form-input.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    .input-hint {
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .input-hint.success { color: var(--success); }
+    .input-hint.error { color: var(--danger); }
+    .input-hint.info { color: var(--text-muted); }
+
+    /* Coin Selector — EXPANDED */
+    .coin-search {
+      margin-bottom: 16px;
+    }
+    .coin-search input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    .coin-search input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .coin-search-wrapper {
+      position: relative;
+    }
+    .coin-search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .coin-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .coin-option {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .coin-option:hover {
+      border-color: var(--border-hover);
+      background: rgba(255,255,255,0.02);
+    }
+    .coin-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .coin-option .coin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin: 0 auto 8px;
+    }
+    .coin-option .coin-symbol {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+    .coin-option .coin-price {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .coin-option.hidden { display: none; }
+
+    /* Amount */
+    .amount-wrapper {
+      position: relative;
+    }
+    .amount-wrapper .currency {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .amount-wrapper input {
+      padding-left: 44px;
+    }
+    .amount-hint {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.8rem;
+    }
+    .amount-hint .limit {
+      color: var(--text-muted);
+    }
+    .amount-hint .max-btn {
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .amount-hint .max-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Coupon */
+    .coupon-row {
+      display: flex;
+      gap: 12px;
+    }
+    .coupon-row .form-input {
+      flex: 1;
+    }
+    .btn-apply {
+      padding: 14px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-apply:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .btn-apply:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .coupon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(168,85,247,0.1);
+      border: 1px solid var(--bonus);
+      border-radius: 10px;
+      color: var(--bonus);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    .coupon-badge i {
+      color: var(--bonus);
+    }
+
+    /* Summary */
+    .summary-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: sticky;
+      top: 84px;
+    }
+    .summary-panel h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+    .summary-row.total {
+      padding: 20px 0;
+      margin-top: 8px;
+      border-top: 2px solid var(--border);
+      border-bottom: none;
+    }
+    .summary-row.total .value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .summary-row.bonus {
+      border-bottom: none;
+    }
+    .summary-row.bonus .value {
+      color: var(--bonus);
+      font-weight: 600;
+    }
+    .summary-label {
+      color: var(--text-secondary);
+    }
+    .summary-value {
+      font-weight: 600;
+    }
+    .summary-value.bonus {
+      color: var(--bonus);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--primary-glow);
+    }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--primary); }
+    .toast.bonus { border-left: 3px solid var(--bonus); }
+
+    /* Cookie */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 20px 32px;
+      z-index: 4000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .cookie-btns { display: flex; gap: 12px; }
+    .cookie-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .cookie-accept { background: var(--primary); color: white; }
+    .cookie-manage { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+    /* Chat */
+    .chat-widget {
+      position: fixed;
+      bottom: 24px; left: 24px;
+      z-index: 3000;
+    }
+    .chat-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-btn:hover { transform: scale(1.05); }
+    .chat-modal {
+      position: absolute;
+      bottom: 70px; left: 0;
+      width: 340px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .chat-modal.open { display: block; }
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chat-header h4 { font-size: 1rem; }
+    .chat-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .chat-body {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .chat-input {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      margin-top: 12px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    .chat-send {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      margin-top: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1200px) {
+      .page-content {
+        grid-template-columns: 1fr;
+        max-width: 720px;
+      }
+      .steps-panel, .summary-panel {
+        position: static;
+        order: -1;
+      }
+      .steps-panel {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        padding: 20px;
+      }
+      .steps-panel h3 { display: none; }
+      .step-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-width: 100px;
+        padding: 12px;
+        border-bottom: none;
+        border-right: 1px solid var(--border);
+      }
+      .step-item:last-child { border-right: none; }
+      .step-content h4 { font-size: 0.85rem; }
+      .step-content p { display: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .page-content { padding: 24px 16px; }
+      .form-panel { padding: 24px; }
+      .coin-grid { grid-template-columns: repeat(3, 1fr); }
+      .coupon-row { flex-direction: column; }
+      .btn-apply { width: 100%; }
+      .toast-container { right: 12px; bottom: 12px; }
+      .chat-widget { left: 12px; bottom: 80px; }
+      .cookie-banner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    <i class="fas fa-cookie-bite"></i> We use cookies to secure your account, analyze traffic, and personalize your experience.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-manage" onclick="acceptCookies()">Manage</button>
+    <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept all</button>
+  </div>
+</div>
+
+<div class="chat-widget">
+  <div class="chat-modal" id="chatModal">
+    <div class="chat-header">
+      <h4><i class="fas fa-headset"></i> Support</h4>
+      <button class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-body">
+      <p>Hi! 👋 Our team is currently assisting other users. Leave your email and message — we'll reply within 2 hours.</p>
+      <input type="text" class="chat-input" placeholder="Your email" id="chatEmail">
+      <input type="text" class="chat-input" placeholder="How can we help?" id="chatMsg">
+      <button class="chat-send" onclick="sendChat()">Send message</button>
+    </div>
+  </div>
+  <button class="chat-btn" onclick="toggleChat()" id="chatBtn"><i class="fas fa-comment-dots"></i></button>
+</div>
+
+<!-- Nav -->
+<<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html" class="active">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html" class="active">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html" style="color: var(--primary);">Get started</a>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+  
+  <!-- Steps Panel -->
+  <div class="steps-panel">
+    <h3>Checkout</h3>
+    <div class="step-item active" id="step1">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h4>Select asset</h4>
+        <p>Choose cryptocurrency and amount</p>
+      </div>
+    </div>
+    <div class="step-item" id="step2">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h4>Wallet</h4>
+        <p>Enter your receiving address</p>
+      </div>
+    </div>
+    <div class="step-item" id="step3">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h4>Payment</h4>
+        <p>Complete card payment</p>
+      </div>
+    </div>
+    <div class="step-item" id="step4">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h4>Confirmation</h4>
+        <p>Receive your crypto</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="form-panel">
+    <h1>Buy cryptocurrency</h1>
+    <p class="subtitle">Purchase crypto instantly with your card</p>
+    
+    <div class="form-group">
+      <label class="form-label">Select cryptocurrency</label>
+      <div class="coin-search-wrapper coin-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="coinSearch" placeholder="Search coins..." oninput="filterCoins()">
+      </div>
+      <div class="coin-grid" id="coinGrid">
+        <!-- Coins injected by JS -->
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Amount</label>
+      <div class="amount-wrapper">
+        <span class="currency">$</span>
+        <input type="number" class="form-input" id="amountInput" placeholder="0.00" step="0.01" min="1" max="25000">
+      </div>
+      <div class="amount-hint">
+        <span class="limit">Min $1 — Max $25,000</span>
+        <span class="max-btn" onclick="setMax()">Set max</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Wallet address</label>
+      <input type="text" class="form-input" id="walletInput" placeholder="Enter your receiving address">
+      <div class="input-hint info" id="walletHint">
+        <i class="fas fa-info-circle"></i> Select a coin first to see address format
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Coupon code (optional)</label>
+      <div class="coupon-row">
+        <input type="text" class="form-input" id="couponInput" placeholder="Enter code">
+        <button class="btn-apply" id="applyBtn" onclick="applyCoupon()">Apply</button>
+      </div>
+      <div id="couponDisplay"></div>
+    </div>
+  </div>
+
+  <!-- Summary Panel -->
+  <div class="summary-panel">
+    <h3><i class="fas fa-receipt"></i> Order summary</h3>
+    
+    <div class="summary-row">
+      <span class="summary-label">Asset</span>
+      <span class="summary-value" id="summaryAsset">Bitcoin (BTC)</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Price</span>
+      <span class="summary-value" id="summaryPrice">$67,245.00</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">You pay</span>
+      <span class="summary-value" id="summaryAmount">$0.00</span>
+    </div>
+    <div class="summary-row bonus" id="bonusRow" style="display: none;">
+      <span class="summary-label">Bonus</span>
+      <span class="summary-value bonus" id="summaryBonus">+$0.00</span>
+    </div>
+    <div class="summary-row total">
+      <span class="summary-label">Total receive</span>
+      <span class="value" id="summaryTotal">0.00000000 BTC</span>
+    </div>
+    
+    <button class="btn-submit" id="submitBtn" onclick="proceedToPayment()" disabled>
+      <i class="fas fa-lock"></i> Continue to payment
+    </button>
+    
+    <div class="secure-note">
+      <i class="fas fa-shield-halved"></i>
+      <span>SSL encrypted • PCI compliant • No card storage</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========== UTILITIES ==========
+  function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', bonus: 'fa-gift' };
+    const colors = { success: '#22c55e', error: '#ef4444', info: '#3b82f6', bonus: '#a855f7' };
+    toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function acceptCookies() {
+    localStorage.setItem('cc_cookies', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+  }
+  if (!localStorage.getItem('cc_cookies')) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('show'), 2000);
+  }
+
+  function toggleChat() {
+    document.getElementById('chatModal').classList.toggle('open');
+  }
+  function sendChat() {
+    const email = document.getElementById('chatEmail').value.trim();
+    const msg = document.getElementById('chatMsg').value.trim();
+    if (!email || !msg) {
+      showToast('Please fill in all fields', 'error');
+      return;
+    }
+    showToast('Message sent! We\'ll reply within 2 hours.', 'success');
+    document.getElementById('chatEmail').value = '';
+    document.getElementById('chatMsg').value = '';
+    toggleChat();
+  }
+
+  // Page transitions
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#')) {
+        e.preventDefault();
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // ========== ALL CRYPTOCURRENCIES ==========
+  const allCoins = [
+    { symbol: 'BTC', name: 'Bitcoin', price: 67245.00, color: '#f7931a', bg: '#f7931a20' },
+    { symbol: 'ETH', name: 'Ethereum', price: 3520.00, color: '#627eea', bg: '#627eea20' },
+    { symbol: 'SOL', name: 'Solana', price: 172.50, color: '#9945ff', bg: '#9945ff20' },
+    { symbol: 'BNB', name: 'BNB', price: 602.00, color: '#f3ba2f', bg: '#f3ba2f20' },
+    { symbol: 'XRP', name: 'XRP', price: 0.61, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'ADA', name: 'Cardano', price: 0.48, color: '#3468d7', bg: '#3468d720' },
+    { symbol: 'DOGE', name: 'Dogecoin', price: 0.134, color: '#c2a633', bg: '#c2a63320' },
+    { symbol: 'TRX', name: 'TRON', price: 0.12, color: '#ff060a', bg: '#ff060a20' },
+    { symbol: 'AVAX', name: 'Avalanche', price: 37.50, color: '#e84142', bg: '#e8414220' },
+    { symbol: 'DOT', name: 'Polkadot', price: 7.32, color: '#e6007a', bg: '#e6007a20' },
+    { symbol: 'LINK', name: 'Chainlink', price: 15.80, color: '#375bd2', bg: '#375bd220' },
+    { symbol: 'MATIC', name: 'Polygon', price: 0.79, color: '#8247e5', bg: '#8247e520' },
+    { symbol: 'ICP', name: 'Internet Computer', price: 8.43, color: '#3b00b9', bg: '#3b00b920' },
+    { symbol: 'SHIB', name: 'Shiba Inu', price: 0.0000192, color: '#e9a53b', bg: '#e9a53b20' },
+    { symbol: 'LTC', name: 'Litecoin', price: 76.40, color: '#345d9d', bg: '#345d9d20' },
+    { symbol: 'UNI', name: 'Uniswap', price: 9.82, color: '#ff007a', bg: '#ff007a20' },
+    { symbol: 'ATOM', name: 'Cosmos', price: 9.12, color: '#2e3148', bg: '#2e314820' },
+    { symbol: 'ETC', name: 'Ethereum Classic', price: 27.20, color: '#328332', bg: '#32833220' },
+    { symbol: 'BCH', name: 'Bitcoin Cash', price: 408.00, color: '#8dc351', bg: '#8dc35120' },
+    { symbol: 'FIL', name: 'Filecoin', price: 5.91, color: '#0090ff', bg: '#0090ff20' },
+    { symbol: 'APT', name: 'Aptos', price: 8.86, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'ARB', name: 'Arbitrum', price: 1.18, color: '#28a0f0', bg: '#28a0f020' },
+    { symbol: 'NEAR', name: 'NEAR Protocol', price: 5.52, color: '#00c08b', bg: '#00c08b20' },
+    { symbol: 'VET', name: 'VeChain', price: 0.0335, color: '#15bdff', bg: '#15bdff20' },
+    { symbol: 'ALGO', name: 'Algorand', price: 0.193, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'EGLD', name: 'MultiversX', price: 36.70, color: '#23f7dd', bg: '#23f7dd20' },
+    { symbol: 'FLOW', name: 'Flow', price: 0.69, color: '#00ef8b', bg: '#00ef8b20' },
+    { symbol: 'SAND', name: 'The Sandbox', price: 0.47, color: '#00adef', bg: '#00adef20' },
+    { symbol: 'MANA', name: 'Decentraland', price: 0.42, color: '#ff2d55', bg: '#ff2d5520' },
+    { symbol: 'AXS', name: 'Axie Infinity', price: 7.23, color: '#0055d5', bg: '#0055d520' },
+    { symbol: 'USDT', name: 'Tether', price: 1.00, color: '#26a17b', bg: '#26a17b20' },
+    { symbol: 'USDC', name: 'USD Coin', price: 1.00, color: '#2775ca', bg: '#2775ca20' },
+    { symbol: 'DAI', name: 'Dai', price: 1.00, color: '#f5ac37', bg: '#f5ac3720' },
+    { symbol: 'TON', name: 'Toncoin', price: 5.40, color: '#0088cc', bg: '#0088cc20' },
+    { symbol: 'CRO', name: 'Cronos', price: 0.09, color: '#002d72', bg: '#002d7220' },
+    { symbol: 'XMR', name: 'Monero', price: 178.00, color: '#ff6600', bg: '#ff660020' },
+    { symbol: 'HBAR', name: 'Hedera', price: 0.08, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'FTM', name: 'Fantom', price: 0.65, color: '#1969ff', bg: '#1969ff20' },
+    { symbol: 'GRT', name: 'The Graph', price: 0.28, color: '#6747ed', bg: '#6747ed20' },
+    { symbol: 'THETA', name: 'Theta', price: 1.45, color: '#2ab8e6', bg: '#2ab8e620' },
+    { symbol: 'EOS', name: 'EOS', price: 0.72, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'XTZ', name: 'Tezos', price: 0.97, color: '#0d61ff', bg: '#0d61ff20' },
+    { symbol: 'AAVE', name: 'Aave', price: 98.00, color: '#b6509e', bg: '#b6509e20' },
+    { symbol: 'MKR', name: 'Maker', price: 1650.00, color: '#1aab9b', bg: '#1aab9b20' },
+    { symbol: 'COMP', name: 'Compound', price: 52.00, color: '#00d395', bg: '#00d39520' },
+    { symbol: 'YFI', name: 'Yearn', price: 7800.00, color: '#006ae3', bg: '#006ae320' },
+    { symbol: 'SNX', name: 'Synthetix', price: 2.85, color: '#0b0816', bg: '#0b081620' },
+    { symbol: 'CRV', name: 'Curve', price: 0.42, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'SUSHI', name: 'SushiSwap', price: 1.15, color: '#fa52a0', bg: '#fa52a020' },
+    { symbol: '1INCH', name: '1inch', price: 0.38, color: '#1b314f', bg: '#1b314f20' },
+    { symbol: 'PEPE', name: 'Pepe', price: 0.000011, color: '#4caf50', bg: '#4caf5020' },
+    { symbol: 'FLOKI', name: 'Floki', price: 0.00018, color: '#d9a13b', bg: '#d9a13b20' },
+    { symbol: 'BONK', name: 'Bonk', price: 0.000028, color: '#f5a623', bg: '#f5a62320' },
+    { symbol: 'WIF', name: 'Dogwifhat', price: 2.35, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'JUP', name: 'Jupiter', price: 0.85, color: '#f47b34', bg: '#f47b3420' },
+    { symbol: 'PYTH', name: 'Pyth', price: 0.38, color: '#e6b800', bg: '#e6b80020' },
+    { symbol: 'TIA', name: 'Celestia', price: 5.20, color: '#7b2cbf', bg: '#7b2cbf20' },
+    { symbol: 'SEI', name: 'Sei', price: 0.35, color: '#7116f0', bg: '#7116f020' },
+    { symbol: 'SUI', name: 'Sui', price: 1.15, color: '#4da2ff', bg: '#4da2ff20' },
+    { symbol: 'OP', name: 'Optimism', price: 1.85, color: '#ff0420', bg: '#ff042020' },
+    { symbol: 'STRK', name: 'Starknet', price: 1.45, color: '#0c0c4f', bg: '#0c0c4f20' },
+    { symbol: 'ZKS', name: 'zkSync', price: 0.12, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'IMX', name: 'Immutable', price: 1.65, color: '#0b4f6c', bg: '#0b4f6c20' },
+    { symbol: 'RNDR', name: 'Render', price: 7.80, color: '#ff4d4d', bg: '#ff4d4d20' },
+    { symbol: 'INJ', name: 'Injective', price: 24.50, color: '#00a3ff', bg: '#00a3ff20' },
+    { symbol: 'KAVA', name: 'Kava', price: 0.65, color: '#ff564f', bg: '#ff564f20' },
+    { symbol: 'RUNE', name: 'THORChain', price: 5.20, color: '#00ccff', bg: '#00ccff20' },
+    { symbol: 'KAS', name: 'Kaspa', price: 0.12, color: '#4cc9f0', bg: '#4cc9f020' },
+    { symbol: 'BEAM', name: 'Beam', price: 0.018, color: '#76b900', bg: '#76b90020' },
+    { symbol: 'GALA', name: 'Gala', price: 0.028, color: '#019a61', bg: '#019a6120' },
+    { symbol: 'ENJ', name: 'Enjin', price: 0.22, color: '#7866d5', bg: '#7866d520' },
+    { symbol: 'CHZ', name: 'Chiliz', price: 0.075, color: '#cd0124', bg: '#cd012420' },
+    { symbol: 'BAT', name: 'Basic Attention', price: 0.24, color: '#ff5000', bg: '#ff500020' },
+    { symbol: 'ZRX', name: '0x', price: 0.52, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'LRC', name: 'Loopring', price: 0.18, color: '#2ab5f6', bg: '#2ab5f620' },
+    { symbol: 'SKL', name: 'SKALE', price: 0.055, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'CELR', name: 'Celer', price: 0.018, color: '#3b99fc', bg: '#3b99fc20' },
+    { symbol: 'ANKR', name: 'Ankr', price: 0.035, color: '#2e6bf6', bg: '#2e6bf620' },
+    { symbol: 'STX', name: 'Stacks', price: 1.85, color: '#5546ff', bg: '#5546ff20' },
+    { symbol: 'MINA', name: 'Mina', price: 0.72, color: '#ff603b', bg: '#ff603b20' },
+    { symbol: 'ROSE', name: 'Oasis', price: 0.095, color: '#0092f6', bg: '#0092f620' },
+    { symbol: 'ONE', name: 'Harmony', price: 0.015, color: '#00aee9', bg: '#00aee920' },
+    { symbol: 'GLMR', name: 'Moonbeam', price: 0.28, color: '#53cbc8', bg: '#53cbc820' },
+    { symbol: 'MOVR', name: 'Moonriver', price: 12.50, color: '#f2d700', bg: '#f2d70020' },
+    { symbol: 'ACA', name: 'Acala', price: 0.085, color: '#e00f8b', bg: '#e00f8b20' },
+    { symbol: 'ASTR', name: 'Astar', price: 0.065, color: '#0047ff', bg: '#0047ff20' },
+    { symbol: 'SDN', name: 'Shiden', price: 0.38, color: '#5928b1', bg: '#5928b120' },
+    { symbol: 'PHA', name: 'Phala', price: 0.18, color: '#cd0e66', bg: '#cd0e6620' },
+    { symbol: 'KILT', name: 'KILT', price: 0.42, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'POLS', name: 'Polkastarter', price: 0.55, color: '#5c25e9', bg: '#5c25e920' },
+    { symbol: 'SUPER', name: 'SuperFarm', price: 0.12, color: '#7b61ff', bg: '#7b61ff20' },
+    { symbol: 'DIA', name: 'DIA', price: 0.38, color: '#b2d530', bg: '#b2d53020' },
+    { symbol: 'OCEAN', name: 'Ocean', price: 0.85, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'FET', name: 'Fetch.ai', price: 1.95, color: '#202944', bg: '#20294420' },
+    { symbol: 'AGIX', name: 'SingularityNET', price: 0.72, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'NMR', name: 'Numeraire', price: 18.50, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'BAND', name: 'Band', price: 1.45, color: '#516ff4', bg: '#516ff420' },
+    { symbol: 'API3', name: 'API3', price: 2.15, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'TRB', name: 'Tellor', price: 85.00, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'RLC', name: 'iExec', price: 2.35, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'STORJ', name: 'Storj', price: 0.55, color: '#2683ff', bg: '#2683ff20' },
+    { symbol: 'AR', name: 'Arweave', price: 28.00, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'SC', name: 'Siacoin', price: 0.0065, color: '#00cba0', bg: '#00cba020' },
+    { symbol: 'BLZ', name: 'Bluzelle', price: 0.28, color: '#18578c', bg: '#18578c20' },
+    { symbol: 'HNT', name: 'Helium', price: 4.20, color: '#474dff', bg: '#474dff20' },
+    { symbol: 'IOTX', name: 'IoTeX', price: 0.045, color: '#00d4aa', bg: '#00d4aa20' },
+    { symbol: 'NKN', name: 'NKN', price: 0.085, color: '#24549c', bg: '#24549c20' },
+    { symbol: 'CKB', name: 'Nervos', price: 0.006, color: '#3cc68a', bg: '#3cc68a20' },
+    { symbol: 'CFX', name: 'Conflux', price: 0.18, color: '#1a1a1a', bg: '#1a1a1a20' },
+    { symbol: 'NEO', name: 'Neo', price: 12.50, color: '#58bf00', bg: '#58bf0020' },
+    { symbol: 'GAS', name: 'Gas', price: 4.20, color: '#00e599', bg: '#00e59920' },
+    { symbol: 'ONT', name: 'Ontology', price: 0.22, color: '#32a4be', bg: '#32a4be20' },
+    { symbol: 'WAVES', name: 'Waves', price: 1.85, color: '#0055ff', bg: '#0055ff20' },
+    { symbol: 'QTUM', name: 'Qtum', price: 3.20, color: '#2e9ad0', bg: '#2e9ad020' },
+    { symbol: 'ICX', name: 'ICON', price: 0.18, color: '#1aaaba', bg: '#1aaaba20' },
+    { symbol: 'AION', name: 'Aion', price: 0.002, color: '#00b4a0', bg: '#00b4a020' },
+    { symbol: 'LSK', name: 'Lisk', price: 1.15, color: '#0d4ea0', bg: '#0d4ea020' },
+    { symbol: 'ARK', name: 'Ark', price: 0.65, color: '#c9292c', bg: '#c9292c20' },
+    { symbol: 'NANO', name: 'Nano', price: 1.85, color: '#4a90e2', bg: '#4a90e220' },
+    { symbol: 'DASH', name: 'Dash', price: 28.50, color: '#008ce7', bg: '#008ce720' },
+    { symbol: 'ZEC', name: 'Zcash', price: 29.40, color: '#f4b728', bg: '#f4b72820' },
+    { symbol: 'XEM', name: 'NEM', price: 0.035, color: '#67b2e8', bg: '#67b2e820' },
+    { symbol: 'REP', name: 'Augur', price: 0.85, color: '#0e0e21', bg: '#0e0e2120' },
+    { symbol: 'BAL', name: 'Balancer', price: 3.85, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'REN', name: 'Ren', price: 0.045, color: '#001b3a', bg: '#001b3a20' },
+    { symbol: 'OXT', name: 'Orchid', price: 0.085, color: '#5f45ba', bg: '#5f45ba20' },
+    { symbol: 'UMA', name: 'UMA', price: 3.20, color: '#ff4a4a', bg: '#ff4a4a20' },
+    { symbol: 'CVC', name: 'Civic', price: 0.12, color: '#3ab03e', bg: '#3ab03e20' },
+    { symbol: 'MANA', name: 'Decentraland', price: 0.42, color: '#ff2d55', bg: '#ff2d5520' },
+    { symbol: 'SAND', name: 'The Sandbox', price: 0.47, color: '#00adef', bg: '#00adef20' },
+    { symbol: 'AXS', name: 'Axie Infinity', price: 7.23, color: '#0055d5', bg: '#0055d520' },
+    { symbol: 'GALA', name: 'Gala', price: 0.028, color: '#019a61', bg: '#019a6120' },
+    { symbol: 'ILV', name: 'Illuvium', price: 52.00, color: '#d53c74', bg: '#d53c7420' },
+    { symbol: 'YGG', name: 'Yield Guild', price: 0.65, color: '#0075ff', bg: '#0075ff20' },
+    { symbol: 'MC', name: 'Merit Circle', price: 0.38, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'ALICE', name: 'My Neighbor Alice', price: 1.15, color: '#f03737', bg: '#f0373720' },
+    { symbol: 'TLM', name: 'Alien Worlds', price: 0.018, color: '#fff', bg: '#ffffff15' },
+    { symbol: 'REQ', name: 'Request', price: 0.12, color: '#00e6a0', bg: '#00e6a020' },
+    { symbol: 'AMP', name: 'Amp', price: 0.0045, color: '#d9327c', bg: '#d9327c20' },
+    { symbol: 'PAXG', name: 'PAX Gold', price: 2450.00, color: '#e6c200', bg: '#e6c20020' },
+    { symbol: 'XAUT', name: 'Tether Gold', price: 2455.00, color: '#26a17b', bg: '#26a17b20' },
+    { symbol: 'PMGT', name: 'Perth Mint', price: 2452.00, color: '#ffd700', bg: '#ffd70020' }
+  ];
+
+  // ========== PRIVATE COUPON CODES ==========
+  // These add FREE BONUS money to the purchase
+  const COUPON_CODES = {
+    'MCCAIN20': { bonus: 20, label: 'MCCAIN20' },
+    'VIP50': { bonus: 50, label: 'VIP50' },
+    'ADMIN100': { bonus: 100, label: 'ADMIN100' },
+    'CUBE200': { bonus: 200, label: 'CUBE200' },
+    'WHALE500': { bonus: 500, label: 'WHALE500' }
+  };
+
+  // ========== STATE ==========
+  let selectedCoin = allCoins[0];
+  let amount = 0;
+  let activeCoupon = null;
+  let bonusAmount = 0;
+
+  // ========== ADDRESS PATTERNS ==========
+  const addressPatterns = {
+    BTC: /^(1|3|bc1)[a-zA-Z0-9]{25,62}$/,
+    ETH: /^0x[a-fA-F0-9]{40}$/,
+    SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    BNB: /^(0x[a-fA-F0-9]{40}|bnb1[a-z0-9]{38,})$/,
+    XRP: /^r[a-zA-Z0-9]{24,34}$/,
+    ADA: /^addr1[a-z0-9]{98,}$/,
+    DOGE: /^D[a-zA-Z0-9]{25,34}$/,
+    TRX: /^T[a-zA-Z0-9]{33}$/,
+    LTC: /^(L|M|ltc1)[a-zA-Z0-9]{25,62}$/,
+    DOT: /^1[a-zA-Z0-9]{46,}$/,
+    LINK: /^0x[a-fA-F0-9]{40}$/,
+    MATIC: /^0x[a-fA-F0-9]{40}$/,
+    AVAX: /^X-[a-zA-Z0-9]{33,}$/,
+    UNI: /^0x[a-fA-F0-9]{40}$/,
+    ATOM: /^cosmos1[a-z0-9]{38,}$/,
+    ETC: /^0x[a-fA-F0-9]{40}$/,
+    BCH: /^(q|p)[a-zA-Z0-9]{41,}$/,
+    FIL: /^f1[a-z0-9]{38,}$/,
+    APT: /^0x[a-fA-F0-9]{64}$/,
+    ARB: /^0x[a-fA-F0-9]{40}$/,
+    NEAR: /^[a-z0-9_-]{2,64}\.near$/,
+    VET: /^0x[a-fA-F0-9]{40}$/,
+    ALGO: /^[A-Z2-7]{58}$/,
+    EGLD: /^erd1[a-z0-9]{58}$/,
+    FLOW: /^0x[a-fA-F0-9]{16}$/,
+    SAND: /^0x[a-fA-F0-9]{40}$/,
+    MANA: /^0x[a-fA-F0-9]{40}$/,
+    AXS: /^0x[a-fA-F0-9]{40}$/,
+    SHIB: /^0x[a-fA-F0-9]{40}$/,
+    USDT: /^0x[a-fA-F0-9]{40}$/,
+    USDC: /^0x[a-fA-F0-9]{40}$/,
+    DAI: /^0x[a-fA-F0-9]{40}$/,
+    TON: /^[UEQ][a-zA-Z0-9_-]{46,}$/,
+    CRO: /^cro1[a-z0-9]{38,}$/,
+    XMR: /^[48][a-zA-Z0-9]{94}$/,
+    HBAR: /^0\.0\.[0-9]{3,}$/,
+    FTM: /^0x[a-fA-F0-9]{40}$/,
+    GRT: /^0x[a-fA-F0-9]{40}$/,
+    THETA: /^0x[a-fA-F0-9]{40}$/,
+    EOS: /^[a-z1-5]{12}$/,
+    XTZ: /^tz1[a-zA-Z0-9]{33}$/,
+    AAVE: /^0x[a-fA-F0-9]{40}$/,
+    MKR: /^0x[a-fA-F0-9]{40}$/,
+    COMP: /^0x[a-fA-F0-9]{40}$/,
+    YFI: /^0x[a-fA-F0-9]{40}$/,
+    SNX: /^0x[a-fA-F0-9]{40}$/,
+    CRV: /^0x[a-fA-F0-9]{40}$/,
+    SUSHI: /^0x[a-fA-F0-9]{40}$/,
+    '1INCH': /^0x[a-fA-F0-9]{40}$/,
+    PEPE: /^0x[a-fA-F0-9]{40}$/,
+    FLOKI: /^0x[a-fA-F0-9]{40}$/,
+    BONK: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    WIF: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    JUP: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    PYTH: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    TIA: /^celestia1[a-z0-9]{38,}$/,
+    SEI: /^sei1[a-z0-9]{38,}$/,
+    SUI: /^0x[a-fA-F0-9]{64}$/,
+    OP: /^0x[a-fA-F0-9]{40}$/,
+    STRK: /^0x[a-fA-F0-9]{40}$/,
+    ZKS: /^0x[a-fA-F0-9]{40}$/,
+    IMX: /^0x[a-fA-F0-9]{40}$/,
+    RNDR: /^0x[a-fA-F0-9]{40}$/,
+    INJ: /^inj1[a-z0-9]{38,}$/,
+    KAVA: /^kava1[a-z0-9]{38,}$/,
+    RUNE: /^thor1[a-z0-9]{38,}$/,
+    KAS: /^kaspa:[a-z0-9]{61,}$/,
+    BEAM: /^0x[a-fA-F0-9]{40}$/,
+    GALA: /^0x[a-fA-F0-9]{40}$/,
+    ENJ: /^0x[a-fA-F0-9]{40}$/,
+    CHZ: /^0x[a-fA-F0-9]{40}$/,
+    BAT: /^0x[a-fA-F0-9]{40}$/,
+    ZRX: /^0x[a-fA-F0-9]{40}$/,
+    LRC: /^0x[a-fA-F0-9]{40}$/,
+    SKL: /^0x[a-fA-F0-9]{40}$/,
+    CELR: /^0x[a-fA-F0-9]{40}$/,
+    ANKR: /^0x[a-fA-F0-9]{40}$/,
+    STX: /^[A-Z0-9]{28,}$/,
+    MINA: /^B62[a-zA-Z0-9]{52}$/,
+    ROSE: /^oasis1[a-z0-9]{38,}$/,
+    ONE: /^one1[a-z0-9]{38,}$/,
+    GLMR: /^0x[a-fA-F0-9]{40}$/,
+    MOVR: /^0x[a-fA-F0-9]{40}$/,
+    ACA: /^5[a-zA-Z0-9]{46,}$/,
+    ASTR: /^5[a-zA-Z0-9]{46,}$/,
+    SDN: /^5[a-zA-Z0-9]{46,}$/,
+    PHA: /^4[a-zA-Z0-9]{46,}$/,
+    KILT: /^4[a-zA-Z0-9]{46,}$/,
+    POLS: /^0x[a-fA-F0-9]{40}$/,
+    SUPER: /^0x[a-fA-F0-9]{40}$/,
+    DIA: /^0x[a-fA-F0-9]{40}$/,
+    OCEAN: /^0x[a-fA-F0-9]{40}$/,
+    FET: /^fetch1[a-z0-9]{38,}$/,
+    AGIX: /^0x[a-fA-F0-9]{40}$/,
+    NMR: /^0x[a-fA-F0-9]{40}$/,
+    BAND: /^band1[a-z0-9]{38,}$/,
+    API3: /^0x[a-fA-F0-9]{40}$/,
+    TRB: /^0x[a-fA-F0-9]{40}$/,
+    RLC: /^0x[a-fA-F0-9]{40}$/,
+    STORJ: /^0x[a-fA-F0-9]{40}$/,
+    AR: /^[a-zA-Z0-9_-]{43}$/,
+    SC: /^[a-f0-9]{76}$/,
+    BLZ: /^0x[a-fA-F0-9]{40}$/,
+    HNT: /^13[a-zA-Z0-9]{49,}$/,
+    IOTX: /^io1[a-z0-9]{38,}$/,
+    NKN: /^NKN[a-zA-Z0-9]{34,}$/,
+    CKB: /^ckb1[a-z0-9]{46,}$/,
+    CFX: /^cfx:[a-z0-9]{42,}$/,
+    NEO: /^N[a-zA-Z0-9]{33}$/,
+    GAS: /^A[a-zA-Z0-9]{33}$/,
+    ONT: /^A[a-zA-Z0-9]{33}$/,
+    WAVES: /^3P[a-zA-Z0-9]{33}$/,
+    QTUM: /^Q[a-zA-Z0-9]{33}$/,
+    ICX: /^hx[a-f0-9]{40}$/,
+    AION: /^0xa0[a-f0-9]{62,}$/,
+    LSK: /^[0-9]{20,}L$/i,
+    ARK: /^A[a-zA-Z0-9]{33}$/,
+    NANO: /^nano_[a-z0-9]{60}$/,
+    DASH: /^X[a-zA-Z0-9]{33}$/,
+    ZEC: /^t1[a-zA-Z0-9]{33}$/,
+    XEM: /^N[a-zA-Z0-9]{39,}$/,
+    REP: /^0x[a-fA-F0-9]{40}$/,
+    BAL: /^0x[a-fA-F0-9]{40}$/,
+    REN: /^0x[a-fA-F0-9]{40}$/,
+    OXT: /^0x[a-fA-F0-9]{40}$/,
+    UMA: /^0x[a-fA-F0-9]{40}$/,
+    CVC: /^0x[a-fA-F0-9]{40}$/,
+    ILV: /^0x[a-fA-F0-9]{40}$/,
+    YGG: /^0x[a-fA-F0-9]{40}$/,
+    MC: /^0x[a-fA-F0-9]{40}$/,
+    ALICE: /^0x[a-fA-F0-9]{40}$/,
+    TLM: /^0x[a-fA-F0-9]{40}$/,
+    REQ: /^0x[a-fA-F0-9]{40}$/,
+    AMP: /^0x[a-fA-F0-9]{40}$/,
+    PAXG: /^0x[a-fA-F0-9]{40}$/,
+    XAUT: /^0x[a-fA-F0-9]{40}$/,
+    PMGT: /^0x[a-fA-F0-9]{40}$/
+  };
+
+  // ========== RENDER COINS ==========
+  function renderCoins() {
+    const grid = document.getElementById('coinGrid');
+    grid.innerHTML = allCoins.map((coin, idx) => `
+      <div class="coin-option ${idx === 0 ? 'selected' : ''}" 
+           data-index="${idx}" 
+           data-symbol="${coin.symbol}" 
+           data-price="${coin.price}" 
+           data-color="${coin.color}">
+        <div class="coin-icon" style="background: ${coin.bg}; color: ${coin.color};">${coin.symbol[0]}</div>
+        <div class="coin-symbol">${coin.symbol}</div>
+        <div class="coin-price">$${coin.price < 0.01 ? coin.price.toFixed(6) : coin.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+      </div>
+    `).join('');
+    
+    document.querySelectorAll('.coin-option').forEach(opt => {
+      opt.addEventListener('click', () => selectCoin(parseInt(opt.dataset.index)));
+    });
+  }
+
+  function selectCoin(index) {
+    document.querySelectorAll('.coin-option').forEach(o => o.classList.remove('selected'));
+    document.querySelector(`[data-index="${index}"]`).classList.add('selected');
+    selectedCoin = allCoins[index];
+    updateSummary();
+    validateWallet();
+    updateStep(1);
+    showToast(`${selectedCoin.symbol} selected`, 'success', 2000);
+  }
+
+  function filterCoins() {
+    const query = document.getElementById('coinSearch').value.toLowerCase();
+    document.querySelectorAll('.coin-option').forEach(opt => {
+      const symbol = opt.dataset.symbol.toLowerCase();
+      const name = allCoins[parseInt(opt.dataset.index)].name.toLowerCase();
+      opt.classList.toggle('hidden', !symbol.includes(query) && !name.includes(query));
+    });
+  }
+
+  // ========== AMOUNT ==========
+  const amountInput = document.getElementById('amountInput');
+  amountInput.addEventListener('input', () => {
+    amount = parseFloat(amountInput.value) || 0;
+    updateSummary();
+    updateSubmitButton();
+  });
+
+  function setMax() {
+    amountInput.value = 25000;
+    amount = 25000;
+    updateSummary();
+    updateSubmitButton();
+    showToast('Maximum amount set', 'info', 2000);
+  }
+
+  // ========== WALLET VALIDATION ==========
+  const walletInput = document.getElementById('walletInput');
+  const walletHint = document.getElementById('walletHint');
+
+  walletInput.addEventListener('input', validateWallet);
+  walletInput.addEventListener('blur', validateWallet);
+
+  function validateWallet() {
+    const addr = walletInput.value.trim();
+    if (!addr) {
+      walletInput.className = 'form-input';
+      walletHint.className = 'input-hint info';
+      walletHint.innerHTML = `<i class="fas fa-info-circle"></i> Enter a valid ${selectedCoin.symbol} address`;
+      return false;
+    }
+    const pattern = addressPatterns[selectedCoin.symbol];
+    const valid = pattern ? pattern.test(addr) : addr.length >= 25;
+    
+    if (valid) {
+      walletInput.className = 'form-input valid';
+      walletHint.className = 'input-hint success';
+      walletHint.innerHTML = `<i class="fas fa-check-circle"></i> Valid ${selectedCoin.symbol} address`;
+      updateStep(2);
+      return true;
+    } else {
+      walletInput.className = 'form-input invalid';
+      walletHint.className = 'input-hint error';
+      walletHint.innerHTML = `<i class="fas fa-times-circle"></i> Invalid address format for ${selectedCoin.symbol}`;
+      return false;
+    }
+  }
+
+  // ========== COUPON — FREE BONUS MONEY ==========
+  function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const btn = document.getElementById('applyBtn');
+    const code = input.value.trim().toUpperCase();
+    
+    if (!code) {
+      showToast('Please enter a code', 'error');
+      return;
+    }
+    if (activeCoupon) {
+      showToast('Coupon already applied', 'error');
+      return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    
+    setTimeout(() => {
+      const coupon = COUPON_CODES[code];
+      if (coupon) {
+        activeCoupon = coupon;
+        bonusAmount = coupon.bonus;
+        input.disabled = true;
+        btn.textContent = 'Applied';
+        document.getElementById('couponDisplay').innerHTML = `
+          <div class="coupon-badge">
+            <i class="fas fa-gift"></i> ${coupon.label} — +$${coupon.bonus} FREE bonus activated!
+          </div>
+        `;
+        updateSummary();
+        showToast(`+$${coupon.bonus} bonus applied!`, 'bonus');
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Apply';
+        showToast('Invalid or expired code', 'error');
+      }
+    }, 800);
+  }
+
+  // ========== UPDATE SUMMARY ==========
+  function updateSummary() {
+    const totalWithBonus = amount + bonusAmount;
+    const cryptoAmount = totalWithBonus > 0 ? totalWithBonus / selectedCoin.price : 0;
+    
+    document.getElementById('summaryAsset').textContent = `${selectedCoin.name} (${selectedCoin.symbol})`;
+    document.getElementById('summaryPrice').textContent = '$' + selectedCoin.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 6});
+    document.getElementById('summaryAmount').textContent = '$' + amount.toFixed(2);
+    
+    if (bonusAmount > 0) {
+      document.getElementById('bonusRow').style.display = 'flex';
+      document.getElementById('summaryBonus').textContent = '+$' + bonusAmount.toFixed(2) + ' FREE';
+    } else {
+      document.getElementById('bonusRow').style.display = 'none';
+    }
+    
+    let displayCrypto;
+    if (cryptoAmount < 0.0001) displayCrypto = cryptoAmount.toFixed(8);
+    else if (cryptoAmount < 1) displayCrypto = cryptoAmount.toFixed(6);
+    else displayCrypto = cryptoAmount.toFixed(4);
+    
+    document.getElementById('summaryTotal').textContent = displayCrypto + ' ' + selectedCoin.symbol;
+  }
+
+  function updateSubmitButton() {
+    const btn = document.getElementById('submitBtn');
+    const valid = amount >= 1 && amount <= 25000 && validateWallet() && walletInput.value.trim();
+    btn.disabled = !valid;
+  }
+
+  function updateStep(step) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById('step' + i);
+      el.classList.remove('active', 'completed');
+      if (i < step) el.classList.add('completed');
+      else if (i === step) el.classList.add('active');
+    }
+  }
+
+  // ========== PROCEED TO PAYMENT ==========
+  function proceedToPayment() {
+    const purchaseData = {
+      coin: selectedCoin.symbol,
+      coinName: selectedCoin.name,
+      price: selectedCoin.price,
+      amount: amount,
+      bonus: bonusAmount,
+      total: amount + bonusAmount,
+      wallet: walletInput.value.trim(),
+      coupon: activeCoupon ? activeCoupon.label : null,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('cc_purchase', JSON.stringify(purchaseData));
+    
+    document.getElementById('pageTransition').classList.add('active');
+    setTimeout(() => {
+      window.location.href = 'payment.html';
+    }, 300);
+  }
+
+  // ========== INIT ==========
+  renderCoins();
+  updateSummary();
+  updateStep(1);
+
+  // Check URL params for pre-selected coin
+  const urlParams = new URLSearchParams(window.location.search);
+  const preselect = urlParams.get('coin');
+  if (preselect) {
+    const idx = allCoins.findIndex(c => c.symbol === preselect);
+    if (idx !== -1) selectCoin(idx);
+  }
+</script>
+</body>
+</html>

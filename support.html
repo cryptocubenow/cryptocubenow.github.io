@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Center — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Get help with CryptoCube. Search our knowledge base or contact support.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .nav-btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+    .nav-btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .nav-btn-primary:hover { background: #2563eb; box-shadow: 0 4px 20px var(--primary-glow); }
+    
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .mobile-menu a.active { color: var(--primary); }
+
+    /* Hero Search */
+    .support-hero {
+      margin-top: 68px;
+      padding: 80px 32px 60px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.06) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .support-hero-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .support-hero h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .support-hero p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 32px;
+    }
+    .search-box {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search-box i {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 18px 20px 18px 56px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 1.05rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Quick Links */
+    .quick-links {
+      padding: 40px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .quick-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .quick-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+    .quick-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .quick-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .quick-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Content Layout */
+    .content-layout {
+      padding: 0 32px 60px;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 84px;
+      height: fit-content;
+    }
+    .sidebar-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding: 0 12px;
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-link {
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-input);
+      color: var(--text);
+    }
+    .sidebar-link.active {
+      background: var(--primary-glow);
+      color: var(--primary);
+    }
+
+    /* Articles */
+    .articles-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .articles-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .articles-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .articles-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .article-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .article-item {
+      padding: 20px;
+      background: var(--bg-input);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .article-item:hover {
+      border-color: var(--border-hover);
+      background: rgba(255,255,255,0.02);
+    }
+    .article-item.hidden {
+      display: none;
+    }
+    .article-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--primary-glow);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .article-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .article-excerpt {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Article Detail */
+    .article-detail {
+      display: none;
+    }
+    .article-detail.active {
+      display: block;
+    }
+    .article-detail h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .article-detail p {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .article-detail ul {
+      margin-left: 20px;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+    .article-detail li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Ticket Form */
+    .ticket-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 40px;
+    }
+    .ticket-panel h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .ticket-panel > p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .btn-submit {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--primary-glow);
+    }
+    .ticket-success {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .ticket-success.active {
+      display: block;
+    }
+    .ticket-success i {
+      font-size: 4rem;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+    .ticket-success h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .ticket-success p {
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .ticket-ref {
+      font-family: 'SF Mono', monospace;
+      background: var(--bg-input);
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 64px 32px 32px;
+      background: var(--bg-elevated);
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .footer-brand .nav-logo { font-size: 1.3rem; }
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 300px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-social a {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .footer-social a:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-col a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 48px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--primary); }
+
+    /* Cookie */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 20px 32px;
+      z-index: 4000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .cookie-btns { display: flex; gap: 12px; }
+    .cookie-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .cookie-accept { background: var(--primary); color: white; }
+    .cookie-manage { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+    @media (max-width: 1024px) {
+      .content-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .quick-links { grid-template-columns: repeat(2, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .support-hero h1 { font-size: 1.8rem; }
+      .quick-links { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .toast-container { right: 12px; bottom: 12px; }
+      .cookie-banner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    <i class="fas fa-cookie-bite"></i> We use cookies to secure your account, analyze traffic, and personalize your experience.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-manage" onclick="acceptCookies()">Manage</button>
+    <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept all</button>
+  </div>
+</div>
+
+<!-- Nav -->
+<<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html" class="active">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html" class="active">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html" style="color: var(--primary);">Get started</a>
+</div>
+
+<!-- Hero -->
+<section class="support-hero">
+  <div class="support-hero-inner">
+    <h1>How can we help?</h1>
+    <p>Search our knowledge base or submit a support ticket</p>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search for articles..." oninput="searchArticles()">
+    </div>
+  </div>
+</section>
+
+<!-- Quick Links -->
+<section class="quick-links">
+  <div class="quick-card" onclick="filterCategory('getting-started')">
+    <div class="quick-icon"><i class="fas fa-rocket"></i></div>
+    <div class="quick-title">Getting Started</div>
+    <div class="quick-desc">Account setup, verification, and first trade</div>
+  </div>
+  <div class="quick-card" onclick="filterCategory('trading')">
+    <div class="quick-icon"><i class="fas fa-chart-line"></i></div>
+    <div class="quick-title">Trading</div>
+    <div class="quick-desc">Buy, sell, fees, and limits</div>
+  </div>
+  <div class="quick-card" onclick="filterCategory('security')">
+    <div class="quick-icon"><i class="fas fa-shield-halved"></i></div>
+    <div class="quick-title">Security</div>
+    <div class="quick-desc">2FA, passwords, and account protection</div>
+  </div>
+  <div class="quick-card" onclick="filterCategory('payments')">
+    <div class="quick-icon"><i class="fas fa-credit-card"></i></div>
+    <div class="quick-title">Payments</div>
+    <div class="quick-desc">Cards, bank transfers, and payouts</div>
+  </div>
+</section>
+
+<!-- Content -->
+<div class="content-layout">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Categories</div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-link active" onclick="filterCategory('all')" data-cat="all">
+        <i class="fas fa-th-large"></i> All Articles
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('getting-started')" data-cat="getting-started">
+        <i class="fas fa-rocket"></i> Getting Started
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('trading')" data-cat="trading">
+        <i class="fas fa-chart-line"></i> Trading
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('security')" data-cat="security">
+        <i class="fas fa-shield-halved"></i> Security
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('payments')" data-cat="payments">
+        <i class="fas fa-credit-card"></i> Payments
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('wallet')" data-cat="wallet">
+        <i class="fas fa-wallet"></i> Wallet
+      </button>
+      <button class="sidebar-link" onclick="filterCategory('account')" data-cat="account">
+        <i class="fas fa-user"></i> Account
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div>
+    <!-- Articles List -->
+    <div class="articles-panel" id="articlesPanel">
+      <div class="articles-header">
+        <h2 id="articlesTitle">All Articles</h2>
+        <span class="articles-count" id="articlesCount">12 articles</span>
+      </div>
+      <div class="article-list" id="articleList">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Article Detail -->
+    <div class="articles-panel article-detail" id="articleDetail">
+      <button class="back-btn" onclick="showArticleList()">
+        <i class="fas fa-arrow-left"></i> Back to articles
+      </button>
+      <div id="articleContent"></div>
+    </div>
+
+    <!-- Ticket Form -->
+    <div class="ticket-panel" id="ticketPanel">
+      <div id="ticketForm">
+        <h2>Still need help?</h2>
+        <p>Submit a ticket and our team will get back to you within 2 hours.</p>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="ticketName" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="ticketEmail" placeholder="you@example.com">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="ticketCategory">
+              <option value="">Select a category</option>
+              <option value="account">Account & Verification</option>
+              <option value="trading">Trading Issues</option>
+              <option value="deposit">Deposits & Withdrawals</option>
+              <option value="security">Security Concerns</option>
+              <option value="bug">Bug Report</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="ticketPriority">
+              <option value="low">Low — General question</option>
+              <option value="medium" selected>Medium — Need help soon</option>
+              <option value="high">High — Urgent issue</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-input" id="ticketSubject" placeholder="Brief description of your issue">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" id="ticketMessage" placeholder="Describe your issue in detail..."></textarea>
+        </div>
+        
+        <button class="btn-submit" onclick="submitTicket()">
+          <i class="fas fa-paper-plane"></i> Submit ticket
+        </button>
+      </div>
+      
+      <div class="ticket-success" id="ticketSuccess">
+        <i class="fas fa-check-circle"></i>
+        <h3>Ticket submitted successfully!</h3>
+        <p>Our support team has received your request.</p>
+        <p>You'll hear back within 2 hours.</p>
+        <div class="ticket-ref" id="ticketRef">TKT-78492</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">CryptoCube</div>
+      <p>The most transparent way to buy, sell, and trade cryptocurrency. Built for traders who demand speed and security.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-x-twitter"></i></a>
+        <a href="#"><i class="fab fa-discord"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="buy.html">Buy crypto</a></li>
+        <li><a href="sell.html">Sell crypto</a></li>
+        <li><a href="market.html">Markets</a></li>
+        <li><a href="wallet.html">Wallet</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="legal.html">Legal</a></li>
+        <li><a href="status.html">Status</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="support.html">Help center</a></li>
+        <li><a href="support.html">Contact us</a></li>
+        <li><a href="#">API docs</a></li>
+        <li><a href="#">Community</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="legal.html">Terms of service</a></li>
+        <li><a href="legal.html">Privacy policy</a></li>
+        <li><a href="legal.html">Cookie policy</a></li>
+        <li><a href="legal.html">Risk disclosure</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 CryptoCube. All rights reserved.</span>
+    <span>CryptoCube is not a bank. Digital assets are volatile. Trade responsibly.</span>
+  </div>
+</footer>
+
+<script>
+  function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+    const colors = { success: '#22c55e', error: '#ef4444', info: '#3b82f6' };
+    toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function acceptCookies() {
+    localStorage.setItem('cc_cookies', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+  }
+  if (!localStorage.getItem('cc_cookies')) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('show'), 2000);
+  }
+
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#')) {
+        e.preventDefault();
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // ========== ARTICLES DATA ==========
+  const articles = [
+    {
+      id: 1,
+      category: 'getting-started',
+      tag: 'Getting Started',
+      title: 'How to create your account',
+      excerpt: 'Step-by-step guide to setting up your CryptoCube account, verifying your identity, and completing KYC.',
+      content: `
+        <h2>How to create your CryptoCube account</h2>
+        <p>Creating your account takes less than 2 minutes. Here's how:</p>
+        <ul>
+          <li>Click "Get started" in the top navigation</li>
+          <li>Enter your full name and email address</li>
+          <li>Create a strong password (minimum 8 characters)</li>
+          <li>Agree to our Terms of Service and Privacy Policy</li>
+          <li>Click "Create account"</li>
+        </ul>
+        <p>You'll receive a verification email. Click the link to activate your account. Basic accounts can trade up to $500/day. Complete KYC to unlock higher limits.</p>
+      `
+    },
+    {
+      id: 2,
+      category: 'getting-started',
+      tag: 'Getting Started',
+      title: 'Verifying your identity (KYC)',
+      excerpt: 'What documents you need, how long verification takes, and what limits apply at each level.',
+      content: `
+        <h2>Identity Verification (KYC)</h2>
+        <p>We use a tiered KYC system to balance convenience with compliance:</p>
+        <ul>
+          <li><strong>Level 1 (Basic):</strong> Email verification only. $500/day limit.</li>
+          <li><strong>Level 2 (Verified):</strong> Government ID + selfie. $5,000/day limit.</li>
+          <li><strong>Level 3 (Advanced):</strong> Proof of address. $25,000+/day limit.</li>
+        </ul>
+        <p>Most verifications are processed automatically within 5 minutes. Manual reviews take up to 24 hours.</p>
+      `
+    },
+    {
+      id: 3,
+      category: 'trading',
+      tag: 'Trading',
+      title: 'How to buy cryptocurrency',
+      excerpt: 'Learn how to purchase crypto with your card, including fees, limits, and settlement times.',
+      content: `
+        <h2>Buying Cryptocurrency</h2>
+        <p>Buying crypto on CryptoCube is simple:</p>
+        <ul>
+          <li>Navigate to the Buy page</li>
+          <li>Select your desired cryptocurrency</li>
+          <li>Enter the amount in USD</li>
+          <li>Provide your wallet address</li>
+          <li>Complete card payment</li>
+        </ul>
+        <p>Settlement typically takes 2-10 minutes depending on network congestion. You'll receive a confirmation email once complete.</p>
+      `
+    },
+    {
+      id: 4,
+      category: 'trading',
+      tag: 'Trading',
+      title: 'Understanding trading fees',
+      excerpt: 'Complete breakdown of our fee structure, including maker/taker fees and withdrawal charges.',
+      content: `
+        <h2>Trading Fees</h2>
+        <p>We believe in radical transparency. Here's exactly what you pay:</p>
+        <ul>
+          <li><strong>Buy fee:</strong> 0.1% flat (no spread markup)</li>
+          <li><strong>Sell fee:</strong> 0.5% flat</li>
+          <li><strong>Withdrawal:</strong> Network fee only (we don't add margin)</li>
+          <li><strong>Deposit:</strong> Free</li>
+        </ul>
+        <p>Use coupon codes for fee discounts. VIP users enjoy reduced rates based on 30-day volume.</p>
+      `
+    },
+    {
+      id: 5,
+      category: 'security',
+      tag: 'Security',
+      title: 'Enabling two-factor authentication',
+      excerpt: 'Protect your account with 2FA using Google Authenticator, Authy, or SMS.',
+      content: `
+        <h2>Two-Factor Authentication (2FA)</h2>
+        <p>We strongly recommend enabling 2FA:</p>
+        <ul>
+          <li>Go to Account Settings → Security</li>
+          <li>Click "Enable 2FA"</li>
+          <li>Scan the QR code with your authenticator app</li>
+          <li>Enter the 6-digit code to confirm</li>
+        </ul>
+        <p>Supported apps: Google Authenticator, Authy, Microsoft Authenticator. SMS 2FA is available but less secure.</p>
+      `
+    },
+    {
+      id: 6,
+      category: 'security',
+      tag: 'Security',
+      title: 'Recognizing phishing attempts',
+      excerpt: 'How to spot fake emails, websites, and social media accounts impersonating CryptoCube.',
+      content: `
+        <h2>Avoiding Phishing</h2>
+        <p>CryptoCube will never:</p>
+        <ul>
+          <li>Ask for your password via email</li>
+          <li>Ask you to send crypto to "verify" your account</li>
+          <li>Send links to domains other than cryptocube.io</li>
+          <li>Pressure you to act immediately</li>
+        </ul>
+        <p>Always check the URL. Our official domains: cryptocube.io, app.cryptocube.io, support.cryptocube.io</p>
+      `
+    },
+    {
+      id: 7,
+      category: 'payments',
+      tag: 'Payments',
+      title: 'Supported payment methods',
+      excerpt: 'Cards, bank transfers, and alternative payment options by region.',
+      content: `
+        <h2>Payment Methods</h2>
+        <p>We support multiple payment options:</p>
+        <ul>
+          <li><strong>Debit/Credit Cards:</strong> Visa, Mastercard, Amex, Discover</li>
+          <li><strong>Bank Transfer:</strong> SEPA (EU), ACH (US), Faster Payments (UK)</li>
+          <li><strong>Digital Wallets:</strong> Apple Pay, Google Pay</li>
+        </ul>
+        <p>Card payments are processed instantly. Bank transfers take 1-3 business days.</p>
+      `
+    },
+    {
+      id: 8,
+      category: 'payments',
+      tag: 'Payments',
+      title: 'Why was my card declined?',
+      excerpt: 'Common reasons for failed payments and how to resolve them.',
+      content: `
+        <h2>Card Payment Issues</h2>
+        <p>Common reasons for declines:</p>
+        <ul>
+          <li>Insufficient funds</li>
+          <li>Bank blocking crypto transactions (contact your bank)</li>
+          <li>Incorrect billing address</li>
+          <li>Card not enabled for online/3D Secure payments</li>
+          <li>Daily purchase limit exceeded</li>
+        </ul>
+        <p>Try a different card or contact your bank to authorize crypto purchases.</p>
+      `
+    },
+    {
+      id: 9,
+      category: 'wallet',
+      tag: 'Wallet',
+      title: 'How to deposit crypto',
+      excerpt: 'Generate deposit addresses, network selection, and confirmation times.',
+      content: `
+        <h2>Depositing Cryptocurrency</h2>
+        <p>To deposit crypto to your external wallet:</p>
+        <ul>
+          <li>Go to Wallet → Deposit</li>
+          <li>Select the cryptocurrency</li>
+          <li>Choose the correct network (e.g., ERC-20, BEP-20)</li>
+          <li>Copy the deposit address or scan the QR code</li>
+          <li>Send from your external wallet</li>
+        </ul>
+        <p>Always double-check the network. Sending to the wrong network may result in permanent loss.</p>
+      `
+    },
+    {
+      id: 10,
+      category: 'wallet',
+      tag: 'Wallet',
+      title: 'Withdrawal limits and processing',
+      excerpt: 'Daily limits, security holds, and how to request higher limits.',
+      content: `
+        <h2>Withdrawals</h2>
+        <p>Withdrawal limits by verification level:</p>
+        <ul>
+          <li><strong>Basic:</strong> $500/day</li>
+          <li><strong>Verified:</strong> $5,000/day</li>
+          <li><strong>Advanced:</strong> $25,000+/day</li>
+        </ul>
+        <p>New accounts have a 24-hour hold on first withdrawal. Large withdrawals may require manual review (up to 12 hours).</p>
+      `
+    },
+    {
+      id: 11,
+      category: 'account',
+      tag: 'Account',
+      title: 'Resetting your password',
+      excerpt: 'Forgot your password? Here is how to regain access to your account safely.',
+      content: `
+        <h2>Password Reset</h2>
+        <p>If you forgot your password:</p>
+        <ul>
+          <li>Click "Forgot password" on the login page</li>
+          <li>Enter your registered email</li>
+          <li>Check your inbox for the reset link (valid for 1 hour)</li>
+          <li>Create a new strong password</li>
+        </ul>
+        <p>For security, password resets trigger a 24-hour withdrawal hold. Contact support if you don't receive the email.</p>
+      `
+    },
+    {
+      id: 12,
+      category: 'account',
+      tag: 'Account',
+      title: 'Closing your account',
+      excerpt: 'How to permanently delete your account and what happens to your data.',
+      content: `
+        <h2>Account Closure</h2>
+        <p>To close your account:</p>
+        <ul>
+          <li>Withdraw all balances (crypto and fiat)</li>
+          <li>Cancel any pending orders</li>
+          <li>Go to Account Settings → Close Account</li>
+          <li>Confirm via email</li>
+        </ul>
+        <p>Account closure is irreversible. We retain transaction records for 7 years per regulatory requirements.</p>
+      `
+    }
+  ];
+
+  // ========== RENDER ARTICLES ==========
+  function renderArticles(filter = 'all', search = '') {
+    const list = document.getElementById('articleList');
+    let filtered = articles;
+    
+    if (filter !== 'all') {
+      filtered = filtered.filter(a => a.category === filter);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(a => 
+        a.title.toLowerCase().includes(q) || 
+        a.excerpt.toLowerCase().includes(q)
+      );
+    }
+    
+    document.getElementById('articlesCount').textContent = `${filtered.length} article${filtered.length !== 1 ? 's' : ''}`;
+    
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+          No articles found. Try a different search term.
+        </div>
+      `;
+      return;
+    }
+    
+    list.innerHTML = filtered.map(a => `
+      <div class="article-item" onclick="showArticle(${a.id})">
+        <span class="article-tag">${a.tag}</span>
+        <div class="article-title">${a.title}</div>
+        <div class="article-excerpt">${a.excerpt}</div>
+      </div>
+    `).join('');
+  }
+
+  function filterCategory(cat) {
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
+    
+    const titles = {
+      'all': 'All Articles',
+      'getting-started': 'Getting Started',
+      'trading': 'Trading',
+      'security': 'Security',
+      'payments': 'Payments',
+      'wallet': 'Wallet',
+      'account': 'Account'
+    };
+    document.getElementById('articlesTitle').textContent = titles[cat] || 'Articles';
+    
+    renderArticles(cat, document.getElementById('searchInput').value);
+  }
+
+  function searchArticles() {
+    const activeCat = document.querySelector('.sidebar-link.active').dataset.cat;
+    renderArticles(activeCat, document.getElementById('searchInput').value);
+  }
+
+  function showArticle(id) {
+    const article = articles.find(a => a.id === id);
+    if (!article) return;
+    
+    document.getElementById('articlesPanel').style.display = 'none';
+    document.getElementById('articleDetail').classList.add('active');
+    document.getElementById('articleContent').innerHTML = article.content;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showArticleList() {
+    document.getElementById('articlesPanel').style.display = 'block';
+    document.getElementById('articleDetail').classList.remove('active');
+  }
+
+  // ========== TICKET SUBMISSION ==========
+  function submitTicket() {
+    const name = document.getElementById('ticketName').value.trim();
+    const email = document.getElementById('ticketEmail').value.trim();
+    const category = document.getElementById('ticketCategory').value;
+    const priority = document.getElementById('ticketPriority').value;
+    const subject = document.getElementById('ticketSubject').value.trim();
+    const message = document.getElementById('ticketMessage').value.trim();
+    
+    if (!name || !email || !category || !subject || !message) {
+      showToast('Please fill in all required fields', 'error');
+      return;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      showToast('Please enter a valid email', 'error');
+      return;
+    }
+    
+    // Generate ticket reference
+    const ref = 'TKT-' + Math.floor(10000 + Math.random() * 90000);
+    document.getElementById('ticketRef').textContent = ref;
+    
+    // Store ticket in localStorage
+    const tickets = JSON.parse(localStorage.getItem('cc_tickets') || '[]');
+    tickets.push({
+      ref: ref,
+      name: name,
+      email: email,
+      category: category,
+      priority: priority,
+      subject: subject,
+      message: message,
+      status: 'open',
+      createdAt: Date.now()
+    });
+    localStorage.setItem('cc_tickets', JSON.stringify(tickets));
+    
+    // Show success
+    document.getElementById('ticketForm').style.display = 'none';
+    document.getElementById('ticketSuccess').classList.add('active');
+    
+    showToast('Ticket submitted! Reference: ' + ref, 'success', 5000);
+  }
+
+  // Init
+  renderArticles();
+</script>
+</body>
+</html>

